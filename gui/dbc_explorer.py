@@ -48,6 +48,7 @@ class DBCExplorerPanel(ctk.CTkFrame):
             btn = ctk.CTkButton(
                 self._msg_list, text=label, anchor="w",
                 fg_color="transparent", hover_color=("gray75", "gray30"),
+                text_color=("gray10", "gray90"),
                 command=lambda m=msg: self._show_signals(m), height=32,
             )
             btn.pack(fill="x", pady=1)
@@ -79,4 +80,5 @@ class DBCExplorerPanel(ctk.CTkFrame):
                 (str(sig.minimum) if sig.minimum is not None else "", 60),
                 (str(sig.maximum) if sig.maximum is not None else "", 60),
             ]:
-                ctk.CTkLabel(row, text=text, width=width, anchor="w").pack(side="left", padx=4)
+                ctk.CTkLabel(row, text=text, width=width, anchor="w",
+                             text_color=("gray10", "gray90")).pack(side="left", padx=4)
