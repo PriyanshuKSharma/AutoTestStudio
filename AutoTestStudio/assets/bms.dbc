@@ -1,0 +1,28 @@
+VERSION ""
+
+NS_ :
+
+BS_:
+
+BU_:
+
+BO_ 256 BMS_Status: 8 Vector__XXX
+ SG_ SOC : 0|8@1+ (0.5,0) [0|100] "%" Vector__XXX
+ SG_ BMS_State : 8|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ Error_Flags : 12|4@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ Counter : 16|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ Checksum : 24|8@1+ (1,0) [0|255] "" Vector__XXX
+
+BO_ 257 BMS_PackVals: 8 Vector__XXX
+ SG_ Pack_Voltage : 0|16@1+ (0.1,0) [0|600] "V" Vector__XXX
+ SG_ Pack_Current : 16|16@1+ (0.1,-1638.4) [−1638.4|1638.3] "A" Vector__XXX
+ SG_ Avg_Cell_Voltage : 32|16@1+ (0.001,0) [0|5] "V" Vector__XXX
+ SG_ Voltage_Deviation : 48|8@1+ (0.001,0) [0|0.255] "V" Vector__XXX
+
+BO_ 258 BMS_Temps: 8 Vector__XXX
+ SG_ Temp_Max : 0|8@1+ (1,-40) [-40|215] "degC" Vector__XXX
+ SG_ Temp_Min : 8|8@1+ (1,-40) [-40|215] "degC" Vector__XXX
+ SG_ Temp_Avg : 16|8@1+ (1,-40) [-40|215] "degC" Vector__XXX
+
+VAL_ 256 BMS_State 0 "Init" 1 "Idle" 2 "Charging" 3 "Discharging" 4 "Fault" 5 "Balancing" ;
+VAL_ 256 Error_Flags 0 "None" 1 "OverVoltage" 2 "UnderVoltage" 4 "OverTemp" 8 "CommFault" ;
