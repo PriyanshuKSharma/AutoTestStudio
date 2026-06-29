@@ -15,7 +15,7 @@ BO_ 256 BMS_Status: 8 Vector__XXX
 
 BO_ 257 BMS_PackVals: 8 Vector__XXX
  SG_ Pack_Voltage : 0|16@1+ (0.1,0) [0|600] "V" Vector__XXX
- SG_ Pack_Current : 16|16@1+ (0.1,-1638.4) [−1638.4|1638.3] "A" Vector__XXX
+ SG_ Pack_Current : 16|16@1- (0.1,0) [-1638.4|1638.3] "A" Vector__XXX
  SG_ Avg_Cell_Voltage : 32|16@1+ (0.001,0) [0|5] "V" Vector__XXX
  SG_ Voltage_Deviation : 48|8@1+ (0.001,0) [0|0.255] "V" Vector__XXX
 
