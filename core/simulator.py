@@ -1,7 +1,7 @@
 """
 BMS Simulator
 Generates realistic BMS CAN frames on the virtual bus at 100 ms intervals.
-Run alongside the monitor to produce live traffic without real hardware.
+Enable from the CAN Monitor panel to produce live traffic without real hardware.
 """
 import threading
 import math
@@ -20,6 +20,7 @@ class BMSSimulator:
         if self._running:
             return
         self._running = True
+        self._tick = 0
         self._thread = threading.Thread(target=self._loop, daemon=True)
         self._thread.start()
 
@@ -43,49 +44,44 @@ class BMSSimulator:
             time.sleep(0.1)
 
     # ------------------------------------------------------------------ #
-    #  Frame builders                                                      #
+    #  Frame builders — raw byte encoding, no DBC dependency              #
     # ------------------------------------------------------------------ #
     def _send_status(self):
-        # SOC 20-100% cycling slowly
-        soc_pct = 20 + ((self._tick // 10) % 80)
+        # SOC 20-100 % cycling slowly, scale 0.5 → raw = soc/0.5
+        soc_pct = 20 + ((self._tick // 20) % 80)
         soc_raw = int(soc_pct / 0.5) & 0xFF
-        state = 3          # Discharging
-        error_flags = 0
+        # BMS_State=3 (Discharging) in bits[8:12], Error_Flags=0 in bits[12:16]
+        b1 = (3 & 0x0F) | ((0 & 0x0F) << 4)
         counter = self._tick & 0xFF
-        checksum = (soc_raw + state + error_flags + counter) & 0xFF
-        data = bytes([soc_raw, (state | (error_flags << 4)) & 0xFF,
-                      counter, checksum, 0, 0, 0, 0])
-        # Encode manually to avoid DBC dependency in simulator
-        # BMS_State in bits[8:12], Error_Flags in bits[12:16]
-        b1 = (state & 0x0F) | ((error_flags & 0x0F) << 4)
+        checksum = (soc_raw + b1 + counter) & 0xFF
         data = bytes([soc_raw, b1, counter, checksum, 0, 0, 0, 0])
         bus_manager.send(can.Message(arbitration_id=0x100, data=data, is_extended_id=False))
 
     def _send_pack_vals(self):
-        # Voltage 380-420 V oscillating
-        voltage = 400 + 20 * math.sin(self._tick * 0.05)
+        # Pack voltage 380-420 V oscillating, scale 0.1
+        voltage = 400.0 + 20.0 * math.sin(self._tick * 0.05)
         voltage_raw = int(voltage / 0.1) & 0xFFFF
-        # Current -50 to +50 A oscillating (signed 16-bit)
-        current = 30 * math.sin(self._tick * 0.08)
-        current_raw = int(current / 0.1)
-        if current_raw < 0:
-            current_raw = current_raw & 0xFFFF   # two's complement
-        avg_cell_raw = int(3.65 / 0.001) & 0xFFFF
+        # Pack current -50 to +50 A (signed 16-bit), scale 0.1
+        current = 30.0 * math.sin(self._tick * 0.08)
+        current_raw = int(current / 0.1) & 0xFFFF
+        # Avg cell voltage 3.65 V, scale 0.001
+        avg_raw = int(3.65 / 0.001) & 0xFFFF
+        # Voltage deviation 15 mV, scale 0.001
         dev_raw = int(0.015 / 0.001) & 0xFF
         data = bytes([
             voltage_raw & 0xFF, (voltage_raw >> 8) & 0xFF,
             current_raw & 0xFF, (current_raw >> 8) & 0xFF,
-            avg_cell_raw & 0xFF, (avg_cell_raw >> 8) & 0xFF,
+            avg_raw & 0xFF,     (avg_raw >> 8) & 0xFF,
             dev_raw, 0,
         ])
         bus_manager.send(can.Message(arbitration_id=0x101, data=data, is_extended_id=False))
 
     def _send_temps(self):
-        # Temps slowly rising and falling
-        base = 25 + 10 * math.sin(self._tick * 0.02)
-        t_max = int(base + 5 + 40) & 0xFF   # offset +40 for (1,-40) scale
-        t_min = int(base - 3 + 40) & 0xFF
-        t_avg = int(base + 1 + 40) & 0xFF
+        # Temps gently oscillating around 25 °C, DBC offset -40 → raw = temp + 40
+        base = 25.0 + 10.0 * math.sin(self._tick * 0.02)
+        t_max = int(base + 5.0 + 40) & 0xFF
+        t_min = int(base - 3.0 + 40) & 0xFF
+        t_avg = int(base + 1.0 + 40) & 0xFF
         data = bytes([t_max, t_min, t_avg, 0, 0, 0, 0, 0])
         bus_manager.send(can.Message(arbitration_id=0x102, data=data, is_extended_id=False))
 
