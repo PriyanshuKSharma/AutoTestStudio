@@ -1,2 +1,30 @@
-*__pycache__
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+*.egg-info/
+
+# Database
 *.db
+
+# PyInstaller
+build/
+dist/
+*.spec.bak
+
+# Project runtime files
+project.json
+git_recent_repos.json
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.user
+
+# OS
+Thumbs.db
+.DS_Store
