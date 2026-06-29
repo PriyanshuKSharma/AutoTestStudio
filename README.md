@@ -29,12 +29,12 @@ AutoTest Studio connects to a virtual or physical CAN bus, decodes frames with a
 
 ```mermaid
 graph LR
-    A["🖥️ AutoTest Studio\nDesktop GUI"] --> B["📡 CAN Bus\nvirtual / hardware"]
-    B --> C["📦 DBC Decoder\ncantools"]
-    C --> D["🗄️ SQLite\nResults · Events · Logs"]
-    A --> E["🧪 Test Runner\nCAPL-style Python"]
+    A["AutoTest Studio\nDesktop GUI"] --> B["CAN Bus\nvirtual / hardware"]
+    B --> C["DBC Decoder\ncantools"]
+    C --> D["SQLite\nResults · Events · Logs"]
+    A --> E["Test Runner\nCAPL-style Python"]
     E --> D
-    A --> F["⚡ Fault Injector\nOV · UV · OT"]
+    A --> F["Fault Injector\nOV · UV · OT"]
     F --> B
 ```
 
@@ -45,16 +45,16 @@ graph LR
 ```mermaid
 graph TB
     subgraph GUI["GUI Layer  (CustomTkinter)"]
-        HOME["🏠 Home"]
-        MON["📡 Monitor"]
-        SND["📤 Sender"]
-        SIG["📊 Signal Viewer"]
-        DBC_EX["📖 DBC Explorer"]
-        TB["🔧 Test Builder"]
-        TR["▶️ Test Runner"]
-        FI["⚡ Fault Injection"]
-        RPT["📋 Reports"]
-        SET["⚙️ Settings"]
+        HOME["Home"]
+        MON["CAN Monitor"]
+        SND["CAN Sender"]
+        SIG["Signal Viewer"]
+        DBC_EX["DBC Explorer"]
+        TB["Test Builder"]
+        TR["Test Runner"]
+        FI["Fault Injection"]
+        RPT["Reports"]
+        SET["Settings"]
     end
 
     subgraph CORE["Core Layer"]
@@ -181,16 +181,16 @@ classDiagram
 
 ```mermaid
 graph LR
-    NAV["Sidebar\nNavigation"] --> HOME["🏠 Home\nStatus · Quick Start"]
-    NAV --> MON["📡 CAN Monitor\nLive frame trace\nDBC decode · DB log"]
-    NAV --> SND["📤 CAN Sender\nRaw frame · Cyclic\nDBC Signal Encoder"]
-    NAV --> SIG["📊 Signal Viewer\nLive signal table\nUnit display"]
-    NAV --> DBCE["📖 DBC Explorer\nMessages list\nSignal detail table"]
-    NAV --> TB["🔧 Test Builder\nCode editor\nNew · Open · Save"]
-    NAV --> TR["▶️ Test Runner\nSubprocess exec\nLive stdout · DB results"]
-    NAV --> FI["⚡ Fault Injection\nOV · UV · OT · Clear\nRaw frame inject"]
-    NAV --> RPT["📋 Reports\nTest Results tab\nEvent Log tab\nCAN Log tab · CSV export"]
-    NAV --> SET["⚙️ Settings\nBus · Channel · Bitrate\nDBC path · Save project"]
+    NAV["Sidebar\nNavigation"] --> HOME["Home\nStatus · Quick Start"]
+    NAV --> MON["CAN Monitor\nLive frame trace\nDBC decode · DB log"]
+    NAV --> SND["CAN Sender\nRaw frame · Cyclic\nDBC Signal Encoder"]
+    NAV --> SIG["Signal Viewer\nLive signal table\nUnit display"]
+    NAV --> DBCE["DBC Explorer\nMessages list\nSignal detail table"]
+    NAV --> TB["Test Builder\nCode editor\nNew · Open · Save"]
+    NAV --> TR["Test Runner\nSubprocess exec\nLive stdout · DB results"]
+    NAV --> FI["Fault Injection\nOV · UV · OT · Clear\nRaw frame inject"]
+    NAV --> RPT["Reports\nTest Results tab\nEvent Log tab\nCAN Log tab · CSV export"]
+    NAV --> SET["Settings\nBus · Channel · Bitrate\nDBC path · Save project"]
 ```
 
 | Panel | Key Actions |
@@ -248,7 +248,7 @@ sequenceDiagram
     PROC->>TC: fire_stop() → cleanup()
     TC->>DB: INSERT INTO test_results
     PROC-->>TR: stdout lines (streamed)
-    TR->>TR: show ✓ Passed / ✗ Failed
+    TR->>TR: show PASS or FAIL status
     TR->>DB: reload recent results table
 ```
 
@@ -287,11 +287,11 @@ sequenceDiagram
     USER->>SET: select interface, channel, bitrate
     USER->>SET: Browse DBC file
     SET->>DBC: load(path)
-    DBC-->>SET: loaded ✓
+    DBC-->>SET: loaded OK
     SET->>PROJ: project.dbc_path = path
     USER->>SET: Connect Bus
     SET->>BM: connect(interface, channel, bitrate)
-    BM-->>SET: connected ✓
+    BM-->>SET: connected OK
     SET->>PROJ: update bus_interface, channel, bitrate
     USER->>SET: Save Project
     SET->>PROJ: save() → project.json
@@ -304,10 +304,10 @@ sequenceDiagram
 ```mermaid
 graph TD
     BM["BusManager\n(core/bus.py)"]
-    BM --> VIRT["plugins/virtual.py\ninterface='virtual'\nchannel='vcan0'\nNo hardware needed"]
-    BM --> PCAN["plugins/vector.py\ninterface='pcan'\nchannel='PCAN_USBBUS1'\nPeak PCAN adapter"]
-    BM --> SOCK["plugins/vector.py\ninterface='socketcan'\nchannel='can0'\nLinux SocketCAN"]
-    BM --> VEC["plugins/vector.py\ninterface='vector'\nVector XL hardware"]
+    BM --> VIRT["virtual.py\ninterface=virtual\nchannel=vcan0\nNo hardware needed"]
+    BM --> PCAN["vector.py\ninterface=pcan\nchannel=PCAN_USBBUS1\nPeak PCAN adapter"]
+    BM --> SOCK["vector.py\ninterface=socketcan\nchannel=can0\nLinux SocketCAN"]
+    BM --> VEC["vector.py\ninterface=vector\nVector XL hardware"]
 ```
 
 | Interface | Plugin | When to use |
@@ -328,10 +328,10 @@ The bundled DBC is at `AutoTestStudio/assets/bms.dbc`.
 ```mermaid
 graph LR
     DBC_FILE["bms.dbc"] --> DM["DBCManager\ncantools"]
-    DM --> D1["decode(0x100, bytes)\n→ {SOC, BMS_State, Error_Flags, ...}"]
-    DM --> D2["decode(0x101, bytes)\n→ {Pack_Voltage, Pack_Current, ...}"]
-    DM --> D3["decode(0x102, bytes)\n→ {Temp_Max, Temp_Min, Temp_Avg}"]
-    DM --> E1["encode('BMS_Status', signals)\n→ bytes  (Sender / Fault Injection)"]
+    DM --> D1["decode 0x100\nSOC · BMS_State · Error_Flags"]
+    DM --> D2["decode 0x101\nPack_Voltage · Pack_Current"]
+    DM --> D3["decode 0x102\nTemp_Max · Temp_Min · Temp_Avg"]
+    DM --> E1["encode BMS_Status\nbytes for Sender and Fault Injection"]
 ```
 
 | CAN ID | Message | Signals |
@@ -348,20 +348,20 @@ graph LR
 
 ```mermaid
 graph LR
-    A["CAPL: on start {}"] -->|Python| B["@on_start\ndef fn(): ..."]
-    C["CAPL: on stop {}"] -->|Python| D["@on_stop\ndef fn(): ..."]
-    E["CAPL: on message 0x100 {}"] -->|Python| F["@on_message(0x100)\ndef fn(msg): ..."]
-    G["CAPL: setTimer(t, 100)"] -->|Python| H["@every(100)\ndef fn(): ..."]
+    A["CAPL: on start"] -->|Python| B["@on_start\ndef fn()"]
+    C["CAPL: on stop"] -->|Python| D["@on_stop\ndef fn()"]
+    E["CAPL: on message 0x100"] -->|Python| F["@on_message(0x100)\ndef fn(msg)"]
+    G["CAPL: setTimer 100ms"] -->|Python| H["@every(100)\ndef fn()"]
 ```
 
 ### TestCase assertion methods
 
 ```mermaid
 graph TD
-    TC["TestCase('name')"]
-    TC --> C["check(condition, description)\nRecords PASS / FAIL step"]
-    TC --> EE["expect_equal(actual, expected, label)\nWraps check(actual == expected)"]
-    TC --> EIR["expect_in_range(value, low, high, label)\nWraps check(low ≤ value ≤ high)"]
+    TC["TestCase(name)"]
+    TC --> C["check(condition, description)\nRecords PASS or FAIL step"]
+    TC --> EE["expect_equal(actual, expected, label)\nWraps check actual == expected"]
+    TC --> EIR["expect_in_range(value, low, high, label)\nWraps check low to high range"]
     TC --> SUM["summary()\nReturns name, passed, failed, steps, result"]
     TC --> SAVE["save()\nINSERT INTO test_results"]
 ```
@@ -391,12 +391,12 @@ Preset faults are DBC-encoded and sent directly onto the bus:
 ```mermaid
 graph TD
     FI["Fault Injection Panel"]
-    FI --> OV["Over Voltage\nBMS_Status: BMS_State=4, Error_Flags=1\nCAN ID 0x100"]
-    FI --> UV["Under Voltage\nBMS_Status: SOC=5, BMS_State=4, Error_Flags=2\nCAN ID 0x100"]
-    FI --> OT["Over Temperature\nBMS_Temps: Temp_Max=75, Temp_Avg=58\nCAN ID 0x102"]
-    FI --> CLR["Clear Faults\nBMS_Status: BMS_State=1, Error_Flags=0\nCAN ID 0x100"]
-    FI --> RAW["Custom Raw Frame\nFree-form CAN ID + hex bytes"]
-    OV --> LOG["EventLogger → SQLite events\nseverity = critical"]
+    FI --> OV["Over Voltage\nBMS_State=4 Error_Flags=1\n0x100"]
+    FI --> UV["Under Voltage\nSOC=5 BMS_State=4 Error_Flags=2\n0x100"]
+    FI --> OT["Over Temperature\nTemp_Max=75 Temp_Avg=58\n0x102"]
+    FI --> CLR["Clear Faults\nBMS_State=1 Error_Flags=0\n0x100"]
+    FI --> RAW["Custom Raw Frame\nFree-form CAN ID and hex bytes"]
+    OV --> LOG["EventLogger\nSQLite events\nseverity=critical"]
     UV --> LOG
     OT --> LOG
     CLR --> LOG
@@ -515,7 +515,7 @@ graph TD
     G --> H["Open Signal Viewer\nWatch live decoded values"]
     H --> I["Open Test Builder\nWrite or open a test script"]
     I --> J["Open Test Runner\nBrowse script → ▶ Run"]
-    J --> K["View results in Reports"]
+    J --> K["View results in Reports panel"]
 ```
 
 ---

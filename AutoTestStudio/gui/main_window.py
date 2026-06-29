@@ -11,16 +11,16 @@ from gui.reports import ReportsPanel
 from gui.settings import SettingsPanel
 
 NAV_ITEMS = [
-    ("🏠  Home",           HomePanel),
-    ("📡  CAN Monitor",    MonitorPanel),
-    ("📤  CAN Sender",     SenderPanel),
-    ("📊  Signal Viewer",  SignalViewerPanel),
-    ("📖  DBC Explorer",   DBCExplorerPanel),
-    ("🔧  Test Builder",   TestBuilderPanel),
-    ("▶️   Test Runner",    TestRunnerPanel),
-    ("⚡  Fault Injection", FaultInjectionPanel),
-    ("📋  Reports",        ReportsPanel),
-    ("⚙️   Settings",       SettingsPanel),
+    ("◈  Home",            HomePanel),
+    ("◎  CAN Monitor",     MonitorPanel),
+    ("▷  CAN Sender",      SenderPanel),
+    ("▦  Signal Viewer",   SignalViewerPanel),
+    ("≡  DBC Explorer",    DBCExplorerPanel),
+    ("⊞  Test Builder",    TestBuilderPanel),
+    ("▶  Test Runner",     TestRunnerPanel),
+    ("⊗  Fault Injection", FaultInjectionPanel),
+    ("▤  Reports",         ReportsPanel),
+    ("◧  Settings",        SettingsPanel),
 ]
 
 
@@ -36,7 +36,7 @@ class MainWindow(ctk.CTk):
         self._panels: dict[str, ctk.CTkFrame] = {}
         self._active_btn = None
         self._build_layout()
-        self._show_panel("🏠  Home")
+        self._show_panel("◈  Home")
 
     def _build_layout(self):
         # Sidebar
