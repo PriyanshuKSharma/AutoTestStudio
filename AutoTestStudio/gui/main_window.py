@@ -9,6 +9,7 @@ from gui.test_runner import TestRunnerPanel
 from gui.fault_injection import FaultInjectionPanel
 from gui.reports import ReportsPanel
 from gui.settings import SettingsPanel
+from gui.version_control import VersionControlPanel
 
 NAV_ITEMS = [
     ("◈  Home",            HomePanel),
@@ -21,6 +22,7 @@ NAV_ITEMS = [
     ("⊗  Fault Injection", FaultInjectionPanel),
     ("▤  Reports",         ReportsPanel),
     ("◧  Settings",        SettingsPanel),
+    ("⎇  Version Control", VersionControlPanel),
 ]
 
 
