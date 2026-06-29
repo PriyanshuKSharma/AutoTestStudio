@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import config
 from gui.home import HomePanel
 from gui.sender import SenderPanel
 from gui.monitor import MonitorPanel
@@ -29,14 +30,13 @@ NAV_ITEMS = [
 class MainWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
-        ctk.set_appearance_mode("dark")
+        ctk.set_appearance_mode(config.THEME)
         ctk.set_default_color_theme("blue")
         self.title("AutoTest Studio")
         self.geometry("1280x800")
         self.minsize(1024, 640)
 
         self._panels: dict[str, ctk.CTkFrame] = {}
-        self._active_btn = None
         self._build_layout()
         self._show_panel("◈  Home")
 
@@ -48,7 +48,7 @@ class MainWindow(ctk.CTk):
 
         ctk.CTkLabel(
             self._sidebar, text="AutoTest\nStudio",
-            font=ctk.CTkFont(size=18, weight="bold")
+            font=ctk.CTkFont(size=18, weight="bold"),
         ).pack(pady=(20, 24))
 
         for label, PanelClass in NAV_ITEMS:
@@ -61,7 +61,7 @@ class MainWindow(ctk.CTk):
             btn.pack(fill="x", padx=8, pady=2)
 
         # Content area
-        self._content = ctk.CTkFrame(self, corner_radius=0, fg_color=("gray90", "gray17"))
+        self._content = ctk.CTkFrame(self, corner_radius=0, fg_color=("gray92", "gray17"))
         self._content.pack(side="left", fill="both", expand=True)
 
         for label, PanelClass in NAV_ITEMS:
