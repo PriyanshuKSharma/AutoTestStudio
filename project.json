@@ -1,6 +1,6 @@
 {
-  "name": "Untitled Project",
-  "dbc_path": "",
+  "name": "Trial1",
+  "dbc_path": "C:/Users/Admin/Desktop/canoe_simulator_mqi/assets/bms.dbc",
   "bus_interface": "virtual",
   "channel": "vcan0",
   "bitrate": 500000
