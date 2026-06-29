@@ -1,0 +1,5 @@
+VERSION = "0.1.0"
+APP_TITLE = "AutoTest Studio"
+DEFAULT_BUS = "virtual"
+DEFAULT_CHANNEL = "vcan0"
+DB_PATH = "autoteststudio.db"
