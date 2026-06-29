@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from tkinter import filedialog
+import config
 from core.bus import bus_manager
 from core.dbc import dbc_manager
 from core.project import project
@@ -45,9 +46,22 @@ class SettingsPanel(ctk.CTkFrame):
         ctk.CTkLabel(form, text="DBC File").grid(row=4, column=0, padx=12, pady=10, sticky="w")
         dbc_row = ctk.CTkFrame(form, fg_color="transparent")
         dbc_row.grid(row=4, column=1, padx=8, sticky="w")
-        self._dbc_label = ctk.CTkLabel(dbc_row, text=project.dbc_path or "Not loaded", text_color="gray", width=220, anchor="w")
+        self._dbc_label = ctk.CTkLabel(
+            dbc_row, text=project.dbc_path or "Not loaded",
+            text_color=("gray40", "gray60"), width=220, anchor="w",
+        )
         self._dbc_label.pack(side="left")
         ctk.CTkButton(dbc_row, text="Browse", width=80, command=self._browse_dbc).pack(side="left", padx=4)
+
+        # Theme
+        ctk.CTkLabel(form, text="Theme").grid(row=5, column=0, padx=12, pady=10, sticky="w")
+        self._theme_var = ctk.StringVar(value=config.THEME.capitalize())
+        ctk.CTkSegmentedButton(
+            form, values=["Dark", "Light", "System"],
+            variable=self._theme_var,
+            command=self._apply_theme,
+            width=220,
+        ).grid(row=5, column=1, padx=8, sticky="w")
 
         # Buttons
         btn_row = ctk.CTkFrame(self, fg_color="transparent")
@@ -56,8 +70,13 @@ class SettingsPanel(ctk.CTkFrame):
         ctk.CTkButton(btn_row, text="Disconnect", command=self._disconnect).pack(side="left", padx=4)
         ctk.CTkButton(btn_row, text="Save Project", command=self._save_project).pack(side="left", padx=16)
 
-        self._status = ctk.CTkLabel(self, text="", text_color="gray")
+        self._status = ctk.CTkLabel(self, text="", text_color=("gray40", "gray60"))
         self._status.pack(padx=16)
+
+    def _apply_theme(self, value: str):
+        mode = value.lower()
+        ctk.set_appearance_mode(mode)
+        config.THEME = mode
 
     def _browse_dbc(self):
         path = filedialog.askopenfilename(filetypes=[("DBC", "*.dbc"), ("All", "*.*")])
@@ -66,7 +85,7 @@ class SettingsPanel(ctk.CTkFrame):
         try:
             dbc_manager.load(path)
             project.dbc_path = path
-            self._dbc_label.configure(text=path, text_color="white")
+            self._dbc_label.configure(text=path, text_color=("gray20", "white"))
             self._status.configure(text=f"DBC loaded: {path}", text_color="green")
         except Exception as e:
             self._status.configure(text=f"DBC load error: {e}", text_color="red")
@@ -86,7 +105,7 @@ class SettingsPanel(ctk.CTkFrame):
 
     def _disconnect(self):
         bus_manager.disconnect()
-        self._status.configure(text="Disconnected", text_color="gray")
+        self._status.configure(text="Disconnected", text_color=("gray40", "gray60"))
 
     def _save_project(self):
         project.name = self._proj_name.get().strip()
