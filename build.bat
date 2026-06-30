@@ -33,8 +33,8 @@ call .venv\Scripts\activate.bat
 
 :: ── 3. Install dependencies ──────────────────────────────────────────
 echo  [3/6] Installing / updating dependencies...
-pip install -q --upgrade pip
-pip install -q -r requirements.txt
+python -m pip install -q --upgrade pip
+python -m pip install -q -r requirements.txt
 if errorlevel 1 (
     echo  [ERROR] pip install failed. Check your internet connection.
     pause & exit /b 1

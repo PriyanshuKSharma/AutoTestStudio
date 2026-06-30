@@ -22,7 +22,7 @@ if not exist .venv (
 call .venv\Scripts\activate.bat
 
 echo Installing / verifying dependencies...
-pip install -q -r requirements.txt
+python -m pip install -q -r requirements.txt
 
 echo Starting AutoTest Studio...
 python app.py
