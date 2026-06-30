@@ -1,6 +1,6 @@
 ; ============================================================================
 ;  AutoTest Studio — NSIS Installer Script
-;  Produces: AutoTestStudio_Setup_v0.1.0.exe
+;  Produces: AutoTestStudio_Setup_v1.1.0.exe
 ;
 ;  Requirements:
 ;    - NSIS 3.x  (https://nsis.sourceforge.io)
@@ -15,7 +15,7 @@ Unicode True
 ; ── Compiler flags ───────────────────────────────────────────────────────────
 !define APP_NAME        "AutoTest Studio"
 !define APP_EXE         "AutoTestStudio.exe"
-!define APP_VERSION     "0.1.0"
+!define APP_VERSION     "1.1.0"
 !define APP_PUBLISHER   "AutoTest Studio"
 !define APP_URL         "https://github.com/your-org/autoteststudio"
 !define INSTALL_DIR     "$PROGRAMFILES64\AutoTest Studio"

@@ -4,8 +4,8 @@
 # http://msdn.microsoft.com/en-us/library/ms646997.aspx
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(0, 1, 0, 0),
-    prodvers=(0, 1, 0, 0),
+    filevers=(1, 1, 0, 0),
+    prodvers=(1, 1, 0, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x40004,
@@ -20,12 +20,12 @@ VSVersionInfo(
         [
           StringStruct(u'CompanyName',      u'AutoTest Studio'),
           StringStruct(u'FileDescription',  u'AutoTest Studio — CAN Bus Test Automation Platform'),
-          StringStruct(u'FileVersion',      u'0.1.0.0'),
+          StringStruct(u'FileVersion',      u'1.1.0.0'),
           StringStruct(u'InternalName',     u'AutoTestStudio'),
           StringStruct(u'LegalCopyright',   u''),
           StringStruct(u'OriginalFilename', u'AutoTestStudio.exe'),
           StringStruct(u'ProductName',      u'AutoTest Studio'),
-          StringStruct(u'ProductVersion',   u'0.1.0'),
+          StringStruct(u'ProductVersion',   u'1.1.0'),
         ]
       )
     ]),
