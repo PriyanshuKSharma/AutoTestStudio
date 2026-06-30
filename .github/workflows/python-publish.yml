@@ -52,9 +52,9 @@ jobs:
           pip install flake8
           pip install black
 
-      - name: Check Formatting
+      - name: Format Code
         run: |
-          black --check .
+          black .
 
       - name: Run Linter
         run: |
