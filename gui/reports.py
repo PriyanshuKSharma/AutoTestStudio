@@ -1,5 +1,8 @@
 import json
+import config
 import customtkinter as ctk
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from database.sqlite import get_db
 
 class ReportsPanel(ctk.CTkFrame):
@@ -217,17 +220,30 @@ class ReportsPanel(ctk.CTkFrame):
                 text_color=color
             ).pack(side="left", padx=10, pady=4, fill="x", expand=True)
 
+    def _convert_ts(self, utc_str: str) -> str:
+        """Convert a stored UTC ISO timestamp string to the configured local timezone."""
+        try:
+            # Timestamps are stored as plain UTC strings without 'Z' or offset
+            dt_utc = datetime.fromisoformat(utc_str).replace(tzinfo=timezone.utc)
+            tz = ZoneInfo(config.TIMEZONE)
+            dt_local = dt_utc.astimezone(tz)
+            return dt_local.strftime("%H:%M:%S")
+        except (ValueError, ZoneInfoNotFoundError):
+            # Fallback: slice raw string
+            return utc_str[11:19]
+
     def _fill_can_log(self):
         for w in self._can_scroll.winfo_children():
             w.destroy()
-        
+
         db = get_db()
         rows = db.execute("SELECT * FROM can_log ORDER BY id DESC LIMIT 200").fetchall()
-        
-        # Header Row
+
+        # Header Row — show the active timezone in the column name
+        tz_label = config.TIMEZONE
         header = ctk.CTkFrame(self._can_scroll, fg_color=("gray95", "gray25"), corner_radius=6)
         header.pack(fill="x", pady=(0, 6))
-        for col, w in [("Time (UTC)", 100), ("CAN ID", 100), ("DLC", 60), ("Data Payload Bytes (hex)", 0)]:
+        for col, w in [(f"Time ({tz_label})", 120), ("CAN ID", 100), ("DLC", 60), ("Data Payload Bytes (hex)", 0)]:
             ctk.CTkLabel(
                 header,
                 text=col,
@@ -241,12 +257,12 @@ class ReportsPanel(ctk.CTkFrame):
             row_bg = ("gray98", "gray24") if i % 2 == 0 else "transparent"
             row = ctk.CTkFrame(self._can_scroll, fg_color=row_bg, corner_radius=4)
             row.pack(fill="x", pady=1)
-            
-            # Timestamp (Time only)
+
+            # Timestamp — converted to selected timezone
             ctk.CTkLabel(
                 row,
-                text=r["timestamp"][11:19],
-                width=100,
+                text=self._convert_ts(r["timestamp"]),
+                width=120,
                 anchor="w",
                 font=ctk.CTkFont(family="Consolas", size=12)
             ).pack(side="left", padx=10, pady=4)
