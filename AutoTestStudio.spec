@@ -61,7 +61,7 @@ a = Analysis(
     excludes=[
         "matplotlib", "numpy", "pandas", "scipy",
         "PyQt5", "PyQt6", "PySide2", "PySide6",
-        "wx", "unittest", "email", "http", "xmlrpc",
+        "wx",
     ],
     noarchive=False,
 )
