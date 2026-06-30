@@ -98,7 +98,7 @@ echo  ================================================================
 echo   BUILD COMPLETE
 echo  ================================================================
 echo.
-echo   Installer : AutoTestStudio_Setup_v0.1.0.exe
+echo   Installer : AutoTestStudio_Setup_v1.0.0.exe
 echo   Raw app   : dist\AutoTestStudio\AutoTestStudio.exe
 echo.
 echo   The installer is a single .exe file.
