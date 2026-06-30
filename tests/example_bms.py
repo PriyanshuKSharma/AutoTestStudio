@@ -8,7 +8,8 @@ CAPL equivalent:
 """
 
 import can
-import sys, os
+import sys
+import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from framework.decorators import on_start, on_stop, on_message, every, fire_start, fire_stop
