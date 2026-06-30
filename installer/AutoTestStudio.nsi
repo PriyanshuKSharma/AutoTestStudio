@@ -15,9 +15,9 @@ Unicode True
 ; ── Compiler flags ───────────────────────────────────────────────────────────
 !define APP_NAME        "AutoTest Studio"
 !define APP_EXE         "AutoTestStudio.exe"
-!define APP_VERSION     "1.1.0"
+!define APP_VERSION     "1.1.1"
 !define APP_PUBLISHER   "AutoTest Studio"
-!define APP_URL         "https://github.com/your-org/autoteststudio"
+!define APP_URL         "https://github.com/PriyanshuKSharma/AutoTestStudio.git"
 !define INSTALL_DIR     "$PROGRAMFILES64\AutoTest Studio"
 !define UNINSTALL_KEY   "Software\Microsoft\Windows\CurrentVersion\Uninstall\AutoTestStudio"
 !define DIST_DIR        "..\dist\AutoTestStudio"
