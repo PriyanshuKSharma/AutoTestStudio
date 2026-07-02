@@ -3,6 +3,7 @@ Repository Selection Dialog
 Allows the user to open an existing local repo or clone from GitHub.
 Remembers recently used repositories in project config.
 """
+
 from __future__ import annotations
 
 import json
@@ -45,8 +46,9 @@ class RepoDialog(ctk.CTkToplevel):
         self._build()
 
     def _build(self) -> None:
-        ctk.CTkLabel(self, text="Repository Selection",
-                     font=ctk.CTkFont(size=16, weight="bold")).pack(pady=(20, 4))
+        ctk.CTkLabel(
+            self, text="Repository Selection", font=ctk.CTkFont(size=16, weight="bold")
+        ).pack(pady=(20, 4))
 
         tabs = ctk.CTkTabview(self)
         tabs.pack(fill="both", expand=True, padx=20, pady=8)
@@ -58,17 +60,20 @@ class RepoDialog(ctk.CTkToplevel):
 
         btn_row = ctk.CTkFrame(self, fg_color="transparent")
         btn_row.pack(pady=8)
-        ctk.CTkButton(btn_row, text="Cancel", width=100, fg_color="gray40",
-                      command=self.destroy).pack(side="left", padx=8)
-        ctk.CTkButton(btn_row, text="Open", width=100,
-                      command=self._confirm).pack(side="left", padx=8)
+        ctk.CTkButton(
+            btn_row, text="Cancel", width=100, fg_color="gray40", command=self.destroy
+        ).pack(side="left", padx=8)
+        ctk.CTkButton(btn_row, text="Open", width=100, command=self._confirm).pack(
+            side="left", padx=8
+        )
 
     # ------------------------------------------------------------------ #
     #  Local tab                                                           #
     # ------------------------------------------------------------------ #
     def _build_local_tab(self, parent: ctk.CTkFrame) -> None:
         ctk.CTkLabel(parent, text="Recent Repositories", anchor="w").pack(
-            anchor="w", padx=8, pady=(12, 4))
+            anchor="w", padx=8, pady=(12, 4)
+        )
 
         self._recent_var = ctk.StringVar()
         recent = _load_recent()
@@ -82,16 +87,26 @@ class RepoDialog(ctk.CTkToplevel):
         if recent:
             self._recent_var.set(recent[0])
 
-        ctk.CTkLabel(parent, text="Or browse for a repository folder:",
-                     text_color="gray", anchor="w").pack(anchor="w", padx=8, pady=(12, 4))
+        ctk.CTkLabel(
+            parent,
+            text="Or browse for a repository folder:",
+            text_color="gray",
+            anchor="w",
+        ).pack(anchor="w", padx=8, pady=(12, 4))
 
         browse_row = ctk.CTkFrame(parent, fg_color="transparent")
         browse_row.pack(fill="x", padx=8)
-        self._path_label = ctk.CTkLabel(browse_row, text="No folder selected",
-                                        text_color="gray", anchor="w", width=360)
+        self._path_label = ctk.CTkLabel(
+            browse_row,
+            text="No folder selected",
+            text_color="gray",
+            anchor="w",
+            width=360,
+        )
         self._path_label.pack(side="left")
-        ctk.CTkButton(browse_row, text="Browse", width=80,
-                      command=self._browse).pack(side="left", padx=8)
+        ctk.CTkButton(browse_row, text="Browse", width=80, command=self._browse).pack(
+            side="left", padx=8
+        )
 
         self._local_status = ctk.CTkLabel(parent, text="", text_color="red")
         self._local_status.pack(pady=4)
@@ -109,23 +124,33 @@ class RepoDialog(ctk.CTkToplevel):
         _, _ = credential_manager.load()
 
         ctk.CTkLabel(parent, text="Repository URL (HTTPS)", anchor="w").pack(
-            anchor="w", padx=8, pady=(12, 4))
-        self._clone_url = ctk.CTkEntry(parent, width=460,
-                                       placeholder_text="https://github.com/user/repo.git")
+            anchor="w", padx=8, pady=(12, 4)
+        )
+        self._clone_url = ctk.CTkEntry(
+            parent, width=460, placeholder_text="https://github.com/user/repo.git"
+        )
         self._clone_url.pack(padx=8, pady=4)
 
         ctk.CTkLabel(parent, text="Clone into folder", anchor="w").pack(
-            anchor="w", padx=8, pady=(8, 4))
+            anchor="w", padx=8, pady=(8, 4)
+        )
         dest_row = ctk.CTkFrame(parent, fg_color="transparent")
         dest_row.pack(fill="x", padx=8)
-        self._dest_label = ctk.CTkLabel(dest_row, text="No folder selected",
-                                        text_color="gray", anchor="w", width=360)
+        self._dest_label = ctk.CTkLabel(
+            dest_row,
+            text="No folder selected",
+            text_color="gray",
+            anchor="w",
+            width=360,
+        )
         self._dest_label.pack(side="left")
-        ctk.CTkButton(dest_row, text="Browse", width=80,
-                      command=self._browse_dest).pack(side="left", padx=8)
+        ctk.CTkButton(
+            dest_row, text="Browse", width=80, command=self._browse_dest
+        ).pack(side="left", padx=8)
 
-        ctk.CTkButton(parent, text="Clone Repository",
-                      command=self._clone).pack(pady=12)
+        ctk.CTkButton(parent, text="Clone Repository", command=self._clone).pack(
+            pady=12
+        )
 
         self._clone_status = ctk.CTkLabel(parent, text="", text_color="gray")
         self._clone_status.pack()
@@ -141,13 +166,15 @@ class RepoDialog(ctk.CTkToplevel):
     def _clone(self) -> None:
         url = self._clone_url.get().strip()
         if not url or not self._dest_path:
-            self._clone_status.configure(text="URL and destination folder required.",
-                                         text_color="red")
+            self._clone_status.configure(
+                text="URL and destination folder required.", text_color="red"
+            )
             return
         username, pat = credential_manager.load()
         if not username or not pat:
-            self._clone_status.configure(text="No credentials stored. Login first.",
-                                         text_color="red")
+            self._clone_status.configure(
+                text="No credentials stored. Login first.", text_color="red"
+            )
             return
         self._clone_status.configure(text="Cloning...", text_color="gray")
         self.update()
@@ -166,7 +193,11 @@ class RepoDialog(ctk.CTkToplevel):
     # ------------------------------------------------------------------ #
     def _confirm(self) -> None:
         # Priority: browsed path > recent selection > clone result
-        path = getattr(self, "_browsed_path", "") or self._recent_var.get() or self.selected_path
+        path = (
+            getattr(self, "_browsed_path", "")
+            or self._recent_var.get()
+            or self.selected_path
+        )
         if not path or path == "No recent repositories":
             return
         try:
