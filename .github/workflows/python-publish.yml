@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: AutoTest Studio CI
+name: AutoTest Studio CI/CD
 
 on:
   push:
@@ -20,18 +20,17 @@ on:
       - main
       - develop
 
+  release:
+    types: [published]
+
   workflow_dispatch:
 
 jobs:
-
-  test:
-
-    name: Build & Test
-
+  test-build:
+    name: Test & Build
     runs-on: windows-latest
 
     steps:
-
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -39,8 +38,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
 
       - name: Install Dependencies
+        shell: pwsh
         run: |
           python -m pip install --upgrade pip
 
@@ -48,27 +49,31 @@ jobs:
               pip install -r requirements.txt
           }
 
-          pip install pytest
-          pip install flake8
-          pip install black
+          pip install ^
+              pytest ^
+              black ^
+              ruff ^
+              pyinstaller
 
-      - name: Format Code
+      - name: Check Formatting
         run: |
-          black .
+          black --check .
 
       - name: Run Linter
         run: |
-          flake8 . --max-line-length=88
+          ruff check .
 
-      - name: Run Unit Tests
+      - name: Run Tests
         run: |
           pytest
 
-      - name: Upload Test Reports
-        if: always()
+      - name: Build Executable
+        run: |
+          pyinstaller AutoTestStudio.spec
+
+      - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: AutoTestStudio-Windows
           path: |
-            reports/**
-            logs/**
+            dist/**
