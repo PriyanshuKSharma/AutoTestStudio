@@ -4,10 +4,10 @@ Top-level GUI panel for the Version Control feature.
 Wires together: Login -> Repo -> Branch -> Commit -> Push.
 Local Save and GitHub Save are completely separate actions.
 """
+
 from __future__ import annotations
 
 import customtkinter as ctk
-import os
 
 from core.project import project
 from services.credential_manager import credential_manager
@@ -44,7 +44,7 @@ class VersionControlPanel(ctk.CTkFrame):
             header_frame,
             text="Version Control",
             font=ctk.CTkFont(family="Segoe UI", size=24, weight="bold"),
-            anchor="w"
+            anchor="w",
         )
         title_label.pack(anchor="w")
 
@@ -53,7 +53,7 @@ class VersionControlPanel(ctk.CTkFrame):
             text="Track configuration changes, inspect history logs, and push updates to remote git repositories",
             font=ctk.CTkFont(family="Segoe UI", size=13),
             text_color=("gray50", "gray40"),
-            anchor="w"
+            anchor="w",
         )
         subtitle_label.pack(anchor="w", pady=(2, 0))
 
@@ -67,7 +67,7 @@ class VersionControlPanel(ctk.CTkFrame):
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=12
+            corner_radius=12,
         )
         info_card.grid(row=2, column=0, sticky="ew", pady=(0, 16))
         info_card.columnconfigure(0, weight=1)
@@ -80,7 +80,7 @@ class VersionControlPanel(ctk.CTkFrame):
             text="REPOSITORY DETAILS",
             font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
             text_color=("#1f538d", "#60a5fa"),
-            anchor="w"
+            anchor="w",
         ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 4))
 
         divider1 = ctk.CTkFrame(info_inner, height=1, fg_color=("gray90", "gray28"))
@@ -89,30 +89,43 @@ class VersionControlPanel(ctk.CTkFrame):
         # Metadata rows
         metadata = [
             ("Project Name:", project.name, "_proj_label", "Segoe UI", True),
-            ("Git Repository:", "No repository selected", "_repo_label", "Consolas", False),
+            (
+                "Git Repository:",
+                "No repository selected",
+                "_repo_label",
+                "Consolas",
+                False,
+            ),
             ("Active Branch:", "None", "_branch_label", "Consolas", False),
-            ("GitHub Account:", self._stored_username(), "_user_label", "Segoe UI", False)
+            (
+                "GitHub Account:",
+                self._stored_username(),
+                "_user_label",
+                "Segoe UI",
+                False,
+            ),
         ]
 
-        for i, (label_text, default_val, attr_name, font_fam, is_bold) in enumerate(metadata):
+        for i, (label_text, default_val, attr_name, font_fam, is_bold) in enumerate(
+            metadata
+        ):
             lbl = ctk.CTkLabel(
                 info_inner,
                 text=label_text,
                 font=ctk.CTkFont(family="Segoe UI", size=13),
                 text_color=("gray50", "gray40"),
                 anchor="w",
-                width=130
+                width=130,
             )
-            lbl.grid(row=i+2, column=0, sticky="w", pady=6)
+            lbl.grid(row=i + 2, column=0, sticky="w", pady=6)
 
-            val_font = ctk.CTkFont(family=font_fam, size=13, weight="bold" if is_bold else "normal")
-            val_lbl = ctk.CTkLabel(
-                info_inner,
-                text=default_val,
-                font=val_font,
-                anchor="w"
+            val_font = ctk.CTkFont(
+                family=font_fam, size=13, weight="bold" if is_bold else "normal"
             )
-            val_lbl.grid(row=i+2, column=1, sticky="w", pady=6)
+            val_lbl = ctk.CTkLabel(
+                info_inner, text=default_val, font=val_font, anchor="w"
+            )
+            val_lbl.grid(row=i + 2, column=1, sticky="w", pady=6)
             setattr(self, attr_name, val_lbl)
 
             if attr_name == "_repo_label" and default_val != "No repository selected":
@@ -130,7 +143,7 @@ class VersionControlPanel(ctk.CTkFrame):
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=12
+            corner_radius=12,
         )
         btn_card.grid(row=3, column=0, sticky="ew", pady=(0, 10))
 
@@ -151,7 +164,7 @@ class VersionControlPanel(ctk.CTkFrame):
             border_color=("gray80", "gray30"),
             text_color=("#1f538d", "#60a5fa"),
             command=self._save_local,
-            height=36
+            height=36,
         )
         self.btn_save_local.pack(side="left", fill="x", expand=True, padx=(0, 6))
 
@@ -161,7 +174,7 @@ class VersionControlPanel(ctk.CTkFrame):
             font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
             fg_color=("#1f538d", "#60a5fa"),
             command=self._save_to_github,
-            height=36
+            height=36,
         )
         self.btn_save_github.pack(side="right", fill="x", expand=True, padx=(6, 0))
 
@@ -179,7 +192,7 @@ class VersionControlPanel(ctk.CTkFrame):
             border_color=("gray80", "gray30"),
             text_color=("#1f538d", "#60a5fa"),
             command=self._select_repo,
-            height=32
+            height=32,
         )
         self.btn_select_repo.pack(side="left", fill="x", expand=True, padx=(0, 4))
 
@@ -193,7 +206,7 @@ class VersionControlPanel(ctk.CTkFrame):
             border_color=("gray80", "gray30"),
             text_color=("#1f538d", "#60a5fa"),
             command=self._change_branch,
-            height=32
+            height=32,
         )
         self.btn_branch.pack(side="left", fill="x", expand=True, padx=4)
 
@@ -207,7 +220,7 @@ class VersionControlPanel(ctk.CTkFrame):
             border_color=("gray80", "gray30"),
             text_color=("#1f538d", "#60a5fa"),
             command=self._show_history,
-            height=32
+            height=32,
         )
         self.btn_history.pack(side="left", fill="x", expand=True, padx=4)
 
@@ -219,7 +232,7 @@ class VersionControlPanel(ctk.CTkFrame):
             hover_color="#dc2626",
             command=self._logout,
             height=32,
-            width=90
+            width=90,
         )
         self.btn_logout.pack(side="right", padx=(12, 0))
 
@@ -229,7 +242,7 @@ class VersionControlPanel(ctk.CTkFrame):
             text="",
             font=ctk.CTkFont(family="Segoe UI", size=12),
             text_color=("gray50", "gray40"),
-            anchor="w"
+            anchor="w",
         )
         self._msg_label.grid(row=4, column=0, sticky="w", padx=4, pady=8)
 
@@ -256,14 +269,18 @@ class VersionControlPanel(ctk.CTkFrame):
         if not git_service.is_open:
             self._select_repo()
             if not git_service.is_open:
-                self._show_message("No repository selected. Aborting push operation.", "red")
+                self._show_message(
+                    "No repository selected. Aborting push operation.", "red"
+                )
                 return
 
         # Step 3: Ensure branch
         if not self._branch:
             self._change_branch()
             if not self._branch:
-                self._show_message("No active branch selected. Aborting push operation.", "red")
+                self._show_message(
+                    "No active branch selected. Aborting push operation.", "red"
+                )
                 return
 
         # Step 4: Commit dialog
@@ -291,7 +308,9 @@ class VersionControlPanel(ctk.CTkFrame):
         if result.success:
             self._last_commit = result.commit_hash
             self._status_bar.set_synced(result.branch, result.commit_hash)
-            self._branch_label.configure(text=result.branch, text_color=("#1d4ed8", "#60a5fa"))
+            self._branch_label.configure(
+                text=result.branch, text_color=("#1d4ed8", "#60a5fa")
+            )
             self._show_message(
                 f"[Success] Push complete. Branch: {result.branch} | Commit: {result.commit_hash} | Repo: {result.repo_name}",
                 "green",
@@ -304,8 +323,11 @@ class VersionControlPanel(ctk.CTkFrame):
         self.wait_window(dlg)
         if dlg.selected_path:
             self._repo_label.configure(
-                text=git_service.repo_name, text_color=("black", "white"))
-            self._show_message(f"[Repo] Opened repository path: {dlg.selected_path}", "green")
+                text=git_service.repo_name, text_color=("black", "white")
+            )
+            self._show_message(
+                f"[Repo] Opened repository path: {dlg.selected_path}", "green"
+            )
 
     def _change_branch(self) -> None:
         if not git_service.is_open:
@@ -316,7 +338,8 @@ class VersionControlPanel(ctk.CTkFrame):
         if dlg.selected_branch:
             self._branch = dlg.selected_branch
             self._branch_label.configure(
-                text=self._branch, text_color=("#1d4ed8", "#60a5fa"))
+                text=self._branch, text_color=("#1d4ed8", "#60a5fa")
+            )
             self._status_bar.set_not_synced()
 
     def _show_history(self) -> None:
@@ -328,7 +351,9 @@ class VersionControlPanel(ctk.CTkFrame):
     def _logout(self) -> None:
         credential_manager.clear()
         self._user_label.configure(text="Not logged in", text_color="gray")
-        self._show_message("Logged out. Keys and tokens cleared from credentials store.", "gray")
+        self._show_message(
+            "Logged out. Keys and tokens cleared from credentials store.", "gray"
+        )
 
     # ------------------------------------------------------------------ #
     #  Helpers                                                           #
