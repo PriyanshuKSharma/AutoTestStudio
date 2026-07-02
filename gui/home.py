@@ -41,7 +41,7 @@ class HomePanel(ctk.CTkFrame):
             title_frame,
             text="AutoTest Studio",
             font=ctk.CTkFont(family="Segoe UI", size=32, weight="bold"),
-            anchor="w"
+            anchor="w",
         )
         title_label.pack(anchor="w")
 
@@ -50,7 +50,7 @@ class HomePanel(ctk.CTkFrame):
             text="Automotive CAN Diagnostic and Test Automation Platform",
             font=ctk.CTkFont(family="Segoe UI", size=14),
             text_color=("gray50", "gray40"),
-            anchor="w"
+            anchor="w",
         )
         subtitle_label.pack(anchor="w", pady=(2, 0))
 
@@ -60,18 +60,20 @@ class HomePanel(ctk.CTkFrame):
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=10
+            corner_radius=10,
         )
         sys_status_card.grid(row=0, column=1, sticky="e")
 
-        self.sys_dot = ctk.CTkFrame(sys_status_card, width=10, height=10, corner_radius=5, fg_color="#10b981")
+        self.sys_dot = ctk.CTkFrame(
+            sys_status_card, width=10, height=10, corner_radius=5, fg_color="#10b981"
+        )
         self.sys_dot.pack(side="left", padx=(16, 8), pady=8)
-        
+
         self.sys_text = ctk.CTkLabel(
             sys_status_card,
             text="System: Ready",
             font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
-            text_color=("#10b981", "#10b981")
+            text_color=("#10b981", "#10b981"),
         )
         self.sys_text.pack(side="left", padx=(0, 16), pady=8)
 
@@ -92,14 +94,14 @@ class HomePanel(ctk.CTkFrame):
         right_col.columnconfigure(0, weight=1)
 
         # ─── LEFT COLUMN CARDS ───
-        
+
         # 1. CAN Bus Controller Card
         bus_card = ctk.CTkFrame(
             left_col,
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=12
+            corner_radius=12,
         )
         bus_card.grid(row=0, column=0, sticky="ew", pady=(0, 20))
         bus_card.columnconfigure(0, weight=1)
@@ -113,7 +115,7 @@ class HomePanel(ctk.CTkFrame):
             text="CAN BUS CONTROLLER",
             font=ctk.CTkFont(family="Segoe UI", size=14, weight="bold"),
             text_color=("#1f538d", "#60a5fa"),
-            anchor="w"
+            anchor="w",
         )
         bus_title.grid(row=0, column=0, sticky="w", pady=(0, 4))
 
@@ -123,23 +125,25 @@ class HomePanel(ctk.CTkFrame):
         # Status row
         status_row = ctk.CTkFrame(bus_inner, fg_color="transparent")
         status_row.grid(row=2, column=0, sticky="ew", pady=(0, 8))
-        
+
         status_lbl = ctk.CTkLabel(
             status_row,
             text="Connection Status: ",
             font=ctk.CTkFont(family="Segoe UI", size=13),
-            text_color=("gray50", "gray40")
+            text_color=("gray50", "gray40"),
         )
         status_lbl.pack(side="left")
 
-        self.bus_status_dot = ctk.CTkFrame(status_row, width=10, height=10, corner_radius=5, fg_color="#ef4444")
+        self.bus_status_dot = ctk.CTkFrame(
+            status_row, width=10, height=10, corner_radius=5, fg_color="#ef4444"
+        )
         self.bus_status_dot.pack(side="left", padx=(6, 6))
 
         self.bus_status_text = ctk.CTkLabel(
             status_row,
             text="Disconnected",
             font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
-            text_color="#ef4444"
+            text_color="#ef4444",
         )
         self.bus_status_text.pack(side="left")
 
@@ -149,7 +153,7 @@ class HomePanel(ctk.CTkFrame):
             text="Interface: virtual  |  Channel: vcan0  |  Bitrate: 500,000 bps",
             font=ctk.CTkFont(family="Segoe UI", size=13),
             anchor="w",
-            text_color=("gray40", "gray50")
+            text_color=("gray40", "gray50"),
         )
         self.bus_info_lbl.grid(row=3, column=0, sticky="w", pady=(0, 16))
 
@@ -162,7 +166,7 @@ class HomePanel(ctk.CTkFrame):
             text="Connect Bus",
             font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
             command=self._toggle_connection,
-            height=36
+            height=36,
         )
         self.connect_btn.pack(side="left", fill="x", expand=True, padx=(0, 6))
 
@@ -177,7 +181,7 @@ class HomePanel(ctk.CTkFrame):
             text_color=("#1f538d", "#60a5fa"),
             command=self._refresh,
             height=36,
-            width=100
+            width=100,
         )
         self.refresh_btn.pack(side="right", padx=(6, 0))
 
@@ -187,18 +191,18 @@ class HomePanel(ctk.CTkFrame):
             text="",
             font=ctk.CTkFont(family="Segoe UI", size=12),
             text_color="#f97316",
-            anchor="w"
+            anchor="w",
         )
         self.bus_err_lbl.grid(row=5, column=0, sticky="w", pady=(6, 0))
         self.bus_err_lbl.grid_remove()  # hide initially
 
         # 2. Quick Actions Card
         actions_card = ctk.CTkFrame(
-            actions_card_parent := left_col,
+            left_col,
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=12
+            corner_radius=12,
         )
         actions_card.grid(row=1, column=0, sticky="ew")
         actions_card.columnconfigure(0, weight=1)
@@ -212,7 +216,7 @@ class HomePanel(ctk.CTkFrame):
             text="QUICK SHORTCUTS",
             font=ctk.CTkFont(family="Segoe UI", size=14, weight="bold"),
             text_color=("#1f538d", "#60a5fa"),
-            anchor="w"
+            anchor="w",
         )
         actions_title.grid(row=0, column=0, sticky="w", pady=(0, 4))
 
@@ -229,7 +233,7 @@ class HomePanel(ctk.CTkFrame):
             ("Monitor CAN Bus", "◎  CAN Monitor", 0, 0, (0, 4), (0, 4)),
             ("Transmit Frames", "▷  CAN Sender", 0, 1, (4, 0), (0, 4)),
             ("Write Test Scripts", "⊞  Test Builder", 1, 0, (0, 4), (4, 0)),
-            ("Execute Test Suites", "▶  Test Runner", 1, 1, (4, 0), (4, 0))
+            ("Execute Test Suites", "▶  Test Runner", 1, 1, (4, 0), (4, 0)),
         ]
 
         for text, target_tab, r, c, px, py in actions:
@@ -243,7 +247,7 @@ class HomePanel(ctk.CTkFrame):
                 text_color=("#1a202c", "#f7fafc"),
                 border_width=1,
                 border_color=("gray85", "gray28"),
-                height=40
+                height=40,
             )
             btn.grid(row=r, column=c, padx=px, pady=py, sticky="ew")
 
@@ -255,7 +259,7 @@ class HomePanel(ctk.CTkFrame):
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=12
+            corner_radius=12,
         )
         proj_card.grid(row=0, column=0, sticky="ew", pady=(0, 20))
         proj_card.columnconfigure(0, weight=1)
@@ -269,7 +273,7 @@ class HomePanel(ctk.CTkFrame):
             text="PROJECT PROFILE",
             font=ctk.CTkFont(family="Segoe UI", size=14, weight="bold"),
             text_color=("#1f538d", "#60a5fa"),
-            anchor="w"
+            anchor="w",
         )
         proj_title.grid(row=0, column=0, sticky="w", pady=(0, 4))
 
@@ -281,18 +285,20 @@ class HomePanel(ctk.CTkFrame):
             proj_inner,
             text=f"Active Project: {project.name}",
             font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
-            anchor="w"
+            anchor="w",
         )
         self.proj_name_lbl.grid(row=2, column=0, sticky="w", pady=(0, 6))
 
         # DBC Path Info
-        dbc_basename = os.path.basename(project.dbc_path) if project.dbc_path else "None loaded"
+        dbc_basename = (
+            os.path.basename(project.dbc_path) if project.dbc_path else "None loaded"
+        )
         self.dbc_lbl = ctk.CTkLabel(
             proj_inner,
             text=f"DBC Database: {dbc_basename}",
             font=ctk.CTkFont(family="Segoe UI", size=13),
             anchor="w",
-            text_color=("gray50", "gray40")
+            text_color=("gray50", "gray40"),
         )
         self.dbc_lbl.grid(row=3, column=0, sticky="w", pady=(0, 12))
 
@@ -307,7 +313,7 @@ class HomePanel(ctk.CTkFrame):
             border_width=1,
             border_color=("gray80", "gray30"),
             text_color=("#1f538d", "#60a5fa"),
-            height=28
+            height=28,
         )
         self.view_settings_btn.grid(row=4, column=0, sticky="w")
 
@@ -317,7 +323,7 @@ class HomePanel(ctk.CTkFrame):
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=12
+            corner_radius=12,
         )
         guide_card.grid(row=1, column=0, sticky="ew")
         guide_card.columnconfigure(0, weight=1)
@@ -331,7 +337,7 @@ class HomePanel(ctk.CTkFrame):
             text="GUIDED SETUP",
             font=ctk.CTkFont(family="Segoe UI", size=14, weight="bold"),
             text_color=("#1f538d", "#60a5fa"),
-            anchor="w"
+            anchor="w",
         )
         guide_title.grid(row=0, column=0, sticky="w", pady=(0, 4))
 
@@ -340,16 +346,41 @@ class HomePanel(ctk.CTkFrame):
 
         # Create step rows
         steps = [
-            ("Step 1: Set Interface and Load DBC", "Configure connections and databases.", "◧  Settings", "Configure"),
-            ("Step 2: Start CAN Traffic Monitor", "View real-time messages on the bus.", "◎  CAN Monitor", "Monitor"),
-            ("Step 3: Transmit CAN Messages", "Define and send custom payloads.", "▷  CAN Sender", "Transmit"),
-            ("Step 4: Script Test Automation", "Build Python scripts to run test runs.", "⊞  Test Builder", "Build"),
-            ("Step 5: Execute and Run Suites", "Run automated test files and log outcomes.", "▶  Test Runner", "Execute")
+            (
+                "Step 1: Set Interface and Load DBC",
+                "Configure connections and databases.",
+                "◧  Settings",
+                "Configure",
+            ),
+            (
+                "Step 2: Start CAN Traffic Monitor",
+                "View real-time messages on the bus.",
+                "◎  CAN Monitor",
+                "Monitor",
+            ),
+            (
+                "Step 3: Transmit CAN Messages",
+                "Define and send custom payloads.",
+                "▷  CAN Sender",
+                "Transmit",
+            ),
+            (
+                "Step 4: Script Test Automation",
+                "Build Python scripts to run test runs.",
+                "⊞  Test Builder",
+                "Build",
+            ),
+            (
+                "Step 5: Execute and Run Suites",
+                "Run automated test files and log outcomes.",
+                "▶  Test Runner",
+                "Execute",
+            ),
         ]
 
         for i, (step_title, step_desc, target_tab, btn_text) in enumerate(steps):
             step_row = ctk.CTkFrame(guide_inner, fg_color="transparent")
-            step_row.grid(row=i+2, column=0, sticky="ew", pady=6)
+            step_row.grid(row=i + 2, column=0, sticky="ew", pady=6)
             step_row.columnconfigure(0, weight=1)
             step_row.columnconfigure(1, weight=0)
 
@@ -360,7 +391,7 @@ class HomePanel(ctk.CTkFrame):
                 text_frame,
                 text=step_title,
                 font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
-                anchor="w"
+                anchor="w",
             )
             s_title.pack(anchor="w")
 
@@ -369,7 +400,7 @@ class HomePanel(ctk.CTkFrame):
                 text=step_desc,
                 font=ctk.CTkFont(family="Segoe UI", size=11),
                 text_color=("gray50", "gray40"),
-                anchor="w"
+                anchor="w",
             )
             s_desc.pack(anchor="w")
 
@@ -384,7 +415,7 @@ class HomePanel(ctk.CTkFrame):
                 hover_color=("gray90", "gray30"),
                 border_width=1,
                 border_color=("gray85", "gray28"),
-                text_color=("#1f538d", "#60a5fa")
+                text_color=("#1f538d", "#60a5fa"),
             )
             s_btn.grid(row=0, column=1, sticky="e", padx=(10, 0))
 
@@ -401,7 +432,7 @@ class HomePanel(ctk.CTkFrame):
                 bus_manager.connect(
                     interface=project.bus_interface,
                     channel=project.channel,
-                    bitrate=project.bitrate
+                    bitrate=project.bitrate,
                 )
                 self.bus_err_lbl.grid_remove()
                 self._refresh()
@@ -412,15 +443,13 @@ class HomePanel(ctk.CTkFrame):
 
     def _refresh(self):
         connected = bus_manager.connected
-        
+
         # Update connection badge & button
         if connected:
             self.bus_status_dot.configure(fg_color="#10b981")
             self.bus_status_text.configure(text="Connected", text_color="#10b981")
             self.connect_btn.configure(
-                text="Disconnect Bus",
-                fg_color="#dc2626",
-                hover_color="#ef4444"
+                text="Disconnect Bus", fg_color="#dc2626", hover_color="#ef4444"
             )
         else:
             self.bus_status_dot.configure(fg_color="#ef4444")
@@ -428,7 +457,7 @@ class HomePanel(ctk.CTkFrame):
             self.connect_btn.configure(
                 text="Connect Bus",
                 fg_color=("#1f538d", "#1f538d"),
-                hover_color=("#14375e", "#14375e")
+                hover_color=("#14375e", "#14375e"),
             )
 
         # Update configuration text
@@ -439,5 +468,7 @@ class HomePanel(ctk.CTkFrame):
 
         # Update project profile labels
         self.proj_name_lbl.configure(text=f"Active Project: {project.name}")
-        dbc_name = os.path.basename(project.dbc_path) if project.dbc_path else "None loaded"
+        dbc_name = (
+            os.path.basename(project.dbc_path) if project.dbc_path else "None loaded"
+        )
         self.dbc_lbl.configure(text=f"DBC Database: {dbc_name}")
