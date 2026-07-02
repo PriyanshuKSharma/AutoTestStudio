@@ -1,6 +1,6 @@
-import os
 import customtkinter as ctk
 from core.dbc import dbc_manager
+
 
 class DBCExplorerPanel(ctk.CTkFrame):
     def __init__(self, parent):
@@ -26,7 +26,7 @@ class DBCExplorerPanel(ctk.CTkFrame):
             title_frame,
             text="DBC Explorer",
             font=ctk.CTkFont(family="Segoe UI", size=24, weight="bold"),
-            anchor="w"
+            anchor="w",
         )
         title_label.pack(anchor="w")
 
@@ -35,7 +35,7 @@ class DBCExplorerPanel(ctk.CTkFrame):
             text="Browse and inspect database message specifications and signals",
             font=ctk.CTkFont(family="Segoe UI", size=13),
             text_color=("gray50", "gray40"),
-            anchor="w"
+            anchor="w",
         )
         subtitle_label.pack(anchor="w", pady=(2, 0))
 
@@ -50,7 +50,7 @@ class DBCExplorerPanel(ctk.CTkFrame):
             border_color=("gray80", "gray30"),
             text_color=("#1f538d", "#60a5fa"),
             command=self._populate,
-            height=32
+            height=32,
         )
         self.refresh_btn.grid(row=0, column=1, sticky="e")
 
@@ -66,7 +66,7 @@ class DBCExplorerPanel(ctk.CTkFrame):
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=12
+            corner_radius=12,
         )
         left_card.grid(row=0, column=0, sticky="nsew", padx=(0, 10))
         left_card.columnconfigure(0, weight=1)
@@ -80,10 +80,12 @@ class DBCExplorerPanel(ctk.CTkFrame):
             text="MESSAGES",
             font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
             text_color=("#1f538d", "#60a5fa"),
-            anchor="w"
+            anchor="w",
         ).pack(anchor="w", pady=(0, 10))
 
-        self._msg_list = ctk.CTkScrollableFrame(left_inner, height=480, fg_color="transparent")
+        self._msg_list = ctk.CTkScrollableFrame(
+            left_inner, height=480, fg_color="transparent"
+        )
         self._msg_list.pack(fill="both", expand=True)
 
         # Right Column Card (Signals Detail)
@@ -92,7 +94,7 @@ class DBCExplorerPanel(ctk.CTkFrame):
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=12
+            corner_radius=12,
         )
         right_card.grid(row=0, column=1, sticky="nsew", padx=(10, 0))
         right_card.columnconfigure(0, weight=1)
@@ -106,10 +108,12 @@ class DBCExplorerPanel(ctk.CTkFrame):
             text="SIGNALS AND METADATA",
             font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
             text_color=("#1f538d", "#60a5fa"),
-            anchor="w"
+            anchor="w",
         ).pack(anchor="w", pady=(0, 10))
 
-        self._sig_frame = ctk.CTkScrollableFrame(right_inner, height=480, fg_color="transparent")
+        self._sig_frame = ctk.CTkScrollableFrame(
+            right_inner, height=480, fg_color="transparent"
+        )
         self._sig_frame.pack(fill="both", expand=True)
 
         self._populate()
@@ -125,7 +129,7 @@ class DBCExplorerPanel(ctk.CTkFrame):
                 self._msg_list,
                 text="No database file loaded. Go to Settings.",
                 font=ctk.CTkFont(family="Segoe UI", size=12),
-                text_color=("gray50", "gray40")
+                text_color=("gray50", "gray40"),
             ).pack(pady=40)
             return
 
@@ -149,20 +153,24 @@ class DBCExplorerPanel(ctk.CTkFrame):
             w.destroy()
 
         # Message Profile Card
-        msg_card = ctk.CTkFrame(self._sig_frame, fg_color=("gray95", "gray25"), corner_radius=6)
+        msg_card = ctk.CTkFrame(
+            self._sig_frame, fg_color=("gray95", "gray25"), corner_radius=6
+        )
         msg_card.pack(fill="x", pady=(0, 12))
 
         ctk.CTkLabel(
             msg_card,
             text=f"Frame Name: {msg_def.name}   |   ID: 0x{msg_def.frame_id:03X}   |   DLC: {msg_def.length} bytes",
             font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
-            text_color=("#1f538d", "#60a5fa")
+            text_color=("#1f538d", "#60a5fa"),
         ).pack(side="left", padx=12, pady=8)
 
         # Signals Table Header
-        header = ctk.CTkFrame(self._sig_frame, fg_color=("gray90", "gray28"), corner_radius=4)
+        header = ctk.CTkFrame(
+            self._sig_frame, fg_color=("gray90", "gray28"), corner_radius=4
+        )
         header.pack(fill="x", pady=(0, 4))
-        
+
         cols = [
             ("Signal Name", 180),
             ("Start Bit", 60),
@@ -171,23 +179,23 @@ class DBCExplorerPanel(ctk.CTkFrame):
             ("Offset", 70),
             ("Unit", 60),
             ("Min", 60),
-            ("Max", 60)
+            ("Max", 60),
         ]
-        
+
         for col, w in cols:
             ctk.CTkLabel(
                 header,
                 text=col,
                 width=w,
                 anchor="w",
-                font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold")
+                font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
             ).pack(side="left", padx=6, pady=4)
 
         for i, sig in enumerate(msg_def.signals):
             row_bg = ("gray95", "gray24") if i % 2 == 0 else "transparent"
             row = ctk.CTkFrame(self._sig_frame, fg_color=row_bg, corner_radius=4)
             row.pack(fill="x", pady=1)
-            
+
             data_cells = [
                 (sig.name, 180, "Segoe UI", False),
                 (str(sig.start), 60, "Consolas", True),
@@ -195,10 +203,20 @@ class DBCExplorerPanel(ctk.CTkFrame):
                 (str(sig.scale), 70, "Consolas", True),
                 (str(sig.offset), 70, "Consolas", True),
                 (sig.unit or "", 60, "Segoe UI", False),
-                (str(sig.minimum) if sig.minimum is not None else "", 60, "Consolas", True),
-                (str(sig.maximum) if sig.maximum is not None else "", 60, "Consolas", True),
+                (
+                    str(sig.minimum) if sig.minimum is not None else "",
+                    60,
+                    "Consolas",
+                    True,
+                ),
+                (
+                    str(sig.maximum) if sig.maximum is not None else "",
+                    60,
+                    "Consolas",
+                    True,
+                ),
             ]
-            
+
             for text, width, font_family, is_num in data_cells:
                 text_color = ("gray10", "gray90")
                 if is_num and text:
@@ -209,5 +227,5 @@ class DBCExplorerPanel(ctk.CTkFrame):
                     width=width,
                     anchor="w",
                     font=ctk.CTkFont(family=font_family, size=12),
-                    text_color=text_color
+                    text_color=text_color,
                 ).pack(side="left", padx=6, pady=3)
