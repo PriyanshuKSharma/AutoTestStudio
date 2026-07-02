@@ -4,6 +4,7 @@ Stores GitHub credentials exclusively in the OS keyring (Windows Credential
 Manager / macOS Keychain / Linux Secret Service).  The PAT is never written
 to any file or logged.
 """
+
 from __future__ import annotations
 
 import keyring
