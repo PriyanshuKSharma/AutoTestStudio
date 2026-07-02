@@ -12,16 +12,14 @@ import time
 
 import can
 
-PROJECT_ROOT = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..")
-)
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-from core.bus import bus_manager
-from core.logger import logger
-from framework.decorators import (
+from core.bus import bus_manager  # noqa: E402
+from core.logger import logger  # noqa: E402
+from framework.decorators import (  # noqa: E402
     every,
     fire_message,
     fire_start,
@@ -30,8 +28,7 @@ from framework.decorators import (
     on_start,
     on_stop,
 )
-from framework.testcase import TestCase
-
+from framework.testcase import TestCase  # noqa: E402
 
 # Create test case
 tc = TestCase("BMS_Basic_Check")
