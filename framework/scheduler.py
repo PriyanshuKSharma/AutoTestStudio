@@ -7,7 +7,12 @@ class Scheduler:
         self._tasks: list[dict] = []
 
     def add(self, fn: Callable, interval_ms: int):
-        entry = {"fn": fn, "interval": interval_ms / 1000.0, "timer": None, "running": False}
+        entry = {
+            "fn": fn,
+            "interval": interval_ms / 1000.0,
+            "timer": None,
+            "running": False,
+        }
         self._tasks.append(entry)
         return entry
 
