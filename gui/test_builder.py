@@ -1,6 +1,5 @@
 import customtkinter as ctk
 from tkinter import filedialog
-import os
 
 TEMPLATE = '''"""
 AutoTest Studio test script.
@@ -38,6 +37,7 @@ def heartbeat():
     pass
 '''
 
+
 class TestBuilderPanel(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent, fg_color="transparent")
@@ -58,7 +58,7 @@ class TestBuilderPanel(ctk.CTkFrame):
             title_frame,
             text="Test Builder",
             font=ctk.CTkFont(family="Segoe UI", size=24, weight="bold"),
-            anchor="w"
+            anchor="w",
         )
         title_label.pack(anchor="w")
 
@@ -67,7 +67,7 @@ class TestBuilderPanel(ctk.CTkFrame):
             text="Create, edit, and maintain Python automated test scripts",
             font=ctk.CTkFont(family="Segoe UI", size=13),
             text_color=("gray50", "gray40"),
-            anchor="w"
+            anchor="w",
         )
         subtitle_label.pack(anchor="w", pady=(2, 0))
 
@@ -76,36 +76,48 @@ class TestBuilderPanel(ctk.CTkFrame):
         actions_row.grid(row=0, column=1, sticky="e")
 
         self.btn_new = ctk.CTkButton(
-            actions_row, text="New Script", width=90, height=32,
+            actions_row,
+            text="New Script",
+            width=90,
+            height=32,
             font=ctk.CTkFont(family="Segoe UI", size=12, weight="bold"),
-            command=self._new
+            command=self._new,
         )
         self.btn_new.pack(side="left", padx=4)
 
         self.btn_open = ctk.CTkButton(
-            actions_row, text="Open File", width=90, height=32,
+            actions_row,
+            text="Open File",
+            width=90,
+            height=32,
             font=ctk.CTkFont(family="Segoe UI", size=12, weight="bold"),
-            command=self._open
+            command=self._open,
         )
         self.btn_open.pack(side="left", padx=4)
 
         self.btn_save_as = ctk.CTkButton(
-            actions_row, text="Save As", width=80, height=32,
+            actions_row,
+            text="Save As",
+            width=80,
+            height=32,
             font=ctk.CTkFont(family="Segoe UI", size=12),
             fg_color="transparent",
             hover_color=("gray90", "gray28"),
             border_width=1,
             border_color=("gray80", "gray30"),
             text_color=("#1f538d", "#60a5fa"),
-            command=self._save_as
+            command=self._save_as,
         )
         self.btn_save_as.pack(side="right", padx=4)
 
         self.btn_save = ctk.CTkButton(
-            actions_row, text="Save", width=80, height=32,
+            actions_row,
+            text="Save",
+            width=80,
+            height=32,
             font=ctk.CTkFont(family="Segoe UI", size=12, weight="bold"),
             fg_color=("#1f538d", "#60a5fa"),
-            command=self._save
+            command=self._save,
         )
         self.btn_save.pack(side="right", padx=4)
 
@@ -115,12 +127,14 @@ class TestBuilderPanel(ctk.CTkFrame):
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=12
+            corner_radius=12,
         )
         editor_card.pack(fill="both", expand=True, padx=24, pady=(0, 20))
 
         # Path metadata header
-        path_header = ctk.CTkFrame(editor_card, fg_color=("gray95", "gray25"), height=36, corner_radius=10)
+        path_header = ctk.CTkFrame(
+            editor_card, fg_color=("gray95", "gray25"), height=36, corner_radius=10
+        )
         path_header.pack(fill="x", padx=12, pady=(12, 4))
         path_header.pack_propagate(False)
 
@@ -128,14 +142,14 @@ class TestBuilderPanel(ctk.CTkFrame):
             path_header,
             text="Active File:",
             font=ctk.CTkFont(family="Segoe UI", size=12, weight="bold"),
-            text_color=("#1f538d", "#60a5fa")
+            text_color=("#1f538d", "#60a5fa"),
         ).pack(side="left", padx=12)
 
         self._path_label = ctk.CTkLabel(
             path_header,
             text="Untitled Script",
             font=ctk.CTkFont(family="Consolas", size=12),
-            text_color=("gray40", "gray60")
+            text_color=("gray40", "gray60"),
         )
         self._path_label.pack(side="left", padx=(4, 12))
 
@@ -143,7 +157,7 @@ class TestBuilderPanel(ctk.CTkFrame):
         self._editor = ctk.CTkTextbox(
             editor_card,
             font=ctk.CTkFont(family="Consolas", size=13),
-            fg_color="transparent"
+            fg_color="transparent",
         )
         self._editor.pack(fill="both", expand=True, padx=12, pady=(0, 12))
         self._editor.insert("end", TEMPLATE)
@@ -155,7 +169,9 @@ class TestBuilderPanel(ctk.CTkFrame):
         self._path_label.configure(text="Untitled Script")
 
     def _open(self):
-        path = filedialog.askopenfilename(filetypes=[("Python", "*.py"), ("All", "*.*")])
+        path = filedialog.askopenfilename(
+            filetypes=[("Python", "*.py"), ("All", "*.*")]
+        )
         if not path:
             return
         with open(path) as f:
@@ -173,7 +189,9 @@ class TestBuilderPanel(ctk.CTkFrame):
             f.write(self._editor.get("1.0", "end"))
 
     def _save_as(self):
-        path = filedialog.asksaveasfilename(defaultextension=".py", filetypes=[("Python", "*.py")])
+        path = filedialog.asksaveasfilename(
+            defaultextension=".py", filetypes=[("Python", "*.py")]
+        )
         if not path:
             return
         self._current_path = path
