@@ -37,7 +37,7 @@ class MonitorPanel(ctk.CTkFrame):
             title_frame,
             text="CAN Monitor",
             font=ctk.CTkFont(family="Segoe UI", size=24, weight="bold"),
-            anchor="w"
+            anchor="w",
         )
         title_label.pack(anchor="w")
 
@@ -46,7 +46,7 @@ class MonitorPanel(ctk.CTkFrame):
             text="Analyze and log real-time CAN bus frames and signal values",
             font=ctk.CTkFont(family="Segoe UI", size=13),
             text_color=("gray50", "gray40"),
-            anchor="w"
+            anchor="w",
         )
         subtitle_label.pack(anchor="w", pady=(2, 0))
 
@@ -56,18 +56,20 @@ class MonitorPanel(ctk.CTkFrame):
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=10
+            corner_radius=10,
         )
         status_card.grid(row=0, column=1, sticky="e")
 
-        self.mon_dot = ctk.CTkFrame(status_card, width=10, height=10, corner_radius=5, fg_color="#ef4444")
+        self.mon_dot = ctk.CTkFrame(
+            status_card, width=10, height=10, corner_radius=5, fg_color="#ef4444"
+        )
         self.mon_dot.pack(side="left", padx=(16, 8), pady=8)
-        
+
         self.mon_text = ctk.CTkLabel(
             status_card,
             text="Status: Stopped",
             font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
-            text_color=("#ef4444", "#ef4444")
+            text_color=("#ef4444", "#ef4444"),
         )
         self.mon_text.pack(side="left", padx=(0, 16), pady=8)
 
@@ -77,7 +79,7 @@ class MonitorPanel(ctk.CTkFrame):
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=12
+            corner_radius=12,
         )
         ctrl_card.grid(row=1, column=0, sticky="ew", pady=(0, 16))
 
@@ -99,14 +101,16 @@ class MonitorPanel(ctk.CTkFrame):
         self.sim_status_inner = ctk.CTkFrame(ctrl_inner, fg_color="transparent")
         self.sim_status_inner.pack(side="left", padx=16)
 
-        self.sim_dot = ctk.CTkFrame(self.sim_status_inner, width=8, height=8, corner_radius=4, fg_color="gray")
+        self.sim_dot = ctk.CTkFrame(
+            self.sim_status_inner, width=8, height=8, corner_radius=4, fg_color="gray"
+        )
         self.sim_dot.pack(side="left", padx=(0, 6))
 
         self.sim_lbl = ctk.CTkLabel(
             self.sim_status_inner,
             text="Simulator: Off",
             font=ctk.CTkFont(family="Segoe UI", size=13),
-            text_color=("gray50", "gray40")
+            text_color=("gray50", "gray40"),
         )
         self.sim_lbl.pack(side="left")
 
@@ -118,7 +122,7 @@ class MonitorPanel(ctk.CTkFrame):
             fg_color=("#1f538d", "#60a5fa"),
             command=self._start,
             width=80,
-            height=32
+            height=32,
         )
         self._start_btn.pack(side="right", padx=4)
 
@@ -129,7 +133,7 @@ class MonitorPanel(ctk.CTkFrame):
             command=self._stop,
             state="disabled",
             width=80,
-            height=32
+            height=32,
         )
         self._stop_btn.pack(side="right", padx=4)
 
@@ -144,7 +148,7 @@ class MonitorPanel(ctk.CTkFrame):
             text_color=("#1f538d", "#60a5fa"),
             command=self._clear,
             width=90,
-            height=32
+            height=32,
         )
         self.clear_btn.pack(side="right", padx=4)
 
@@ -154,7 +158,7 @@ class MonitorPanel(ctk.CTkFrame):
             text="Connect the bus in Settings, then press Start.",
             font=ctk.CTkFont(family="Segoe UI", size=12),
             text_color=("gray50", "gray40"),
-            anchor="w"
+            anchor="w",
         )
         self._status.grid(row=2, column=0, sticky="w", padx=4, pady=(0, 10))
 
@@ -164,27 +168,37 @@ class MonitorPanel(ctk.CTkFrame):
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=12
+            corner_radius=12,
         )
         table_card.grid(row=3, column=0, sticky="nsew")
         table_card.columnconfigure(0, weight=1)
 
         # Table Header
-        header = ctk.CTkFrame(table_card, fg_color=("gray95", "gray25"), corner_radius=10)
+        header = ctk.CTkFrame(
+            table_card, fg_color=("gray95", "gray25"), corner_radius=10
+        )
         header.grid(row=0, column=0, sticky="ew", padx=12, pady=(12, 4))
-        
-        for col, w in [("Time", 110), ("CAN ID", 80), ("DLC", 40), ("Data (hex)", 210), ("Decoded Signals", 0)]:
+
+        for col, w in [
+            ("Time", 110),
+            ("CAN ID", 80),
+            ("DLC", 40),
+            ("Data (hex)", 210),
+            ("Decoded Signals", 0),
+        ]:
             ctk.CTkLabel(
                 header,
                 text=col,
                 width=w,
                 anchor="w",
                 font=ctk.CTkFont(family="Segoe UI", size=12, weight="bold"),
-                text_color=("#1f538d", "#60a5fa")
+                text_color=("#1f538d", "#60a5fa"),
             ).pack(side="left", padx=10, pady=6)
 
         # Scroll Frame for records
-        self._scroll = ctk.CTkScrollableFrame(table_card, height=400, fg_color="transparent")
+        self._scroll = ctk.CTkScrollableFrame(
+            table_card, height=400, fg_color="transparent"
+        )
         self._scroll.grid(row=1, column=0, sticky="nsew", padx=12, pady=(0, 12))
 
     # ------------------------------------------------------------------ #
@@ -199,9 +213,13 @@ class MonitorPanel(ctk.CTkFrame):
             return
         self._running = True
         self._start_btn.configure(state="disabled")
-        self._stop_btn.configure(state="normal", fg_color="#dc2626", hover_color="#ef4444")
-        self._status.configure(text="[Receiving] Capturing live frames...", text_color="green")
-        
+        self._stop_btn.configure(
+            state="normal", fg_color="#dc2626", hover_color="#ef4444"
+        )
+        self._status.configure(
+            text="[Receiving] Capturing live frames...", text_color="green"
+        )
+
         self.mon_dot.configure(fg_color="#10b981")
         self.mon_text.configure(text="Status: Active", text_color="#10b981")
 
@@ -213,7 +231,7 @@ class MonitorPanel(ctk.CTkFrame):
         self._start_btn.configure(state="normal")
         self._stop_btn.configure(state="disabled", fg_color=None, hover_color=None)
         self._status.configure(text="Stopped.", text_color=("gray50", "gray40"))
-        
+
         self.mon_dot.configure(fg_color="#ef4444")
         self.mon_text.configure(text="Status: Stopped", text_color="#ef4444")
 
@@ -240,7 +258,9 @@ class MonitorPanel(ctk.CTkFrame):
         else:
             bms_simulator.stop()
             self.sim_dot.configure(fg_color="gray")
-            self.sim_lbl.configure(text="Simulator: Off", text_color=("gray50", "gray40"))
+            self.sim_lbl.configure(
+                text="Simulator: Off", text_color=("gray50", "gray40")
+            )
 
     # ------------------------------------------------------------------ #
     #  Receive loop                                                      #
@@ -279,7 +299,8 @@ class MonitorPanel(ctk.CTkFrame):
                 f"{k}={v:.2f}" if isinstance(v, float) else f"{k}={v}"
                 for k, v in decoded.items()
             )
-            if decoded else ""
+            if decoded
+            else ""
         )
 
         bg = ("gray95", "gray25") if self._row_count % 2 == 0 else "transparent"
@@ -300,7 +321,7 @@ class MonitorPanel(ctk.CTkFrame):
                 text=text,
                 width=width,
                 anchor="w",
-                font=ctk.CTkFont(family=font_family, size=12)
+                font=ctk.CTkFont(family=font_family, size=12),
             ).pack(side="left", padx=10, pady=4)
 
         self._row_count += 1
