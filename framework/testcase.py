@@ -41,10 +41,16 @@ class TestCase:
 
     def save(self):
         import json
+
         db = get_db()
         s = self.summary()
         db.execute(
             "INSERT INTO test_results (timestamp, test_name, status, details) VALUES (?,?,?,?)",
-            (datetime.utcnow().isoformat(), self.name, s["result"], json.dumps(s["steps"])),
+            (
+                datetime.utcnow().isoformat(),
+                self.name,
+                s["result"],
+                json.dumps(s["steps"]),
+            ),
         )
         db.commit()
