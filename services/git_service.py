@@ -4,10 +4,11 @@ All Git operations for AutoTest Studio.
 Uses GitPython exclusively.  No subprocess calls.
 No credentials are ever logged or printed.
 """
+
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional
 
 import git
@@ -175,14 +176,16 @@ class GitService:
         try:
             branch = self.current_branch()
             for c in self._repo.iter_commits(branch, max_count=limit):
-                records.append(CommitRecord(
-                    hash=c.hexsha,
-                    short_hash=c.hexsha[:7],
-                    message=c.message.strip().splitlines()[0],
-                    author=str(c.author),
-                    date=c.committed_datetime.strftime("%Y-%m-%d %H:%M"),
-                    branch=branch,
-                ))
+                records.append(
+                    CommitRecord(
+                        hash=c.hexsha,
+                        short_hash=c.hexsha[:7],
+                        message=c.message.strip().splitlines()[0],
+                        author=str(c.author),
+                        date=c.committed_datetime.strftime("%Y-%m-%d %H:%M"),
+                        branch=branch,
+                    )
+                )
         except Exception:
             pass
         return records
@@ -244,6 +247,7 @@ class GitService:
     def _strip_credentials(url: str) -> str:
         """Remove embedded credentials from a URL."""
         import re
+
         return re.sub(r"https://[^@]+@", "https://", url)
 
 
