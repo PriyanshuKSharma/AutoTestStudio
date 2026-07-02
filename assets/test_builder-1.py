@@ -1,14 +1,16 @@
 """
 AutoTest Studio test script.
 """
-import sys, os
+
+import sys
+import os
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 import can
 from framework.decorators import on_start, on_stop, on_message, every
 from framework.testcase import TestCase
 from core.bus import bus_manager
-from core.logger import logger
 
 tc = TestCase("My_Test")
 
@@ -32,4 +34,3 @@ def handle_status(msg: can.Message):
 @every(100)
 def heartbeat():
     pass
-
