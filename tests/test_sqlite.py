@@ -13,8 +13,6 @@ def test_get_db_creates_and_returns_connection():
     assert isinstance(conn, sqlite3.Connection)
     tables = {
         row[0]
-        for row in conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table'"
-        )
+        for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
     }
     assert {"events", "can_log", "test_results"}.issubset(tables)
