@@ -30,11 +30,13 @@ def on_message(can_id: int):
     def decorator(fn: Callable) -> Callable:
         _message_hooks.setdefault(can_id, []).append(fn)
         return fn
+
     return decorator
 
 
 def every(interval_ms: int):
     """Calls the decorated function every interval_ms milliseconds."""
+
     def decorator(fn: Callable) -> Callable:
         def _run():
             fn()
@@ -42,9 +44,11 @@ def every(interval_ms: int):
             _timers.append(t)
             t.daemon = True
             t.start()
+
         fn._interval_ms = interval_ms
         fn._starter = _run
         return fn
+
     return decorator
 
 
@@ -68,8 +72,9 @@ def fire_message(can_id: int, msg):
 
 def start_timers():
     """Call after fire_start() to activate @every decorated functions."""
-    import importlib, sys
+    import sys
+
     for mod in list(sys.modules.values()):
-        for attr in vars(mod).values() if hasattr(mod, '__dict__') else []:
-            if callable(attr) and hasattr(attr, '_starter'):
+        for attr in vars(mod).values() if hasattr(mod, "__dict__") else []:
+            if callable(attr) and hasattr(attr, "_starter"):
                 attr._starter()
