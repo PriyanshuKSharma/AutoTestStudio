@@ -3,6 +3,7 @@ GitStatusBar
 Reusable widget showing local save status and GitHub sync status.
 Embed in any panel with status_bar.pack() or status_bar.grid().
 """
+
 from __future__ import annotations
 
 import customtkinter as ctk
@@ -12,23 +13,29 @@ class GitStatusBar(ctk.CTkFrame):
     def __init__(self, parent: ctk.CTkFrame, **kwargs) -> None:
         super().__init__(parent, fg_color=("gray88", "gray18"), **kwargs)
         self._local_lbl = ctk.CTkLabel(
-            self, text="  Local:  Not Saved", text_color="gray",
+            self,
+            text="  Local:  Not Saved",
+            text_color="gray",
             font=ctk.CTkFont(size=12),
         )
         self._local_lbl.pack(side="left", padx=(12, 24))
 
         self._sync_lbl = ctk.CTkLabel(
-            self, text="GitHub:  Not Synced", text_color="gray",
+            self,
+            text="GitHub:  Not Synced",
+            text_color="gray",
             font=ctk.CTkFont(size=12),
         )
         self._sync_lbl.pack(side="left")
 
-        self._branch_lbl = ctk.CTkLabel(self, text="", text_color="gray",
-                                         font=ctk.CTkFont(size=12))
+        self._branch_lbl = ctk.CTkLabel(
+            self, text="", text_color="gray", font=ctk.CTkFont(size=12)
+        )
         self._branch_lbl.pack(side="left", padx=(24, 4))
 
-        self._commit_lbl = ctk.CTkLabel(self, text="", text_color="gray",
-                                         font=ctk.CTkFont(size=12))
+        self._commit_lbl = ctk.CTkLabel(
+            self, text="", text_color="gray", font=ctk.CTkFont(size=12)
+        )
         self._commit_lbl.pack(side="left")
 
     def set_local_saved(self) -> None:
