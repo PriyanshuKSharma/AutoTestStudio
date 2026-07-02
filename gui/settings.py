@@ -1,4 +1,3 @@
-import os
 import customtkinter as ctk
 from tkinter import filedialog
 import config
@@ -28,7 +27,7 @@ class SettingsPanel(ctk.CTkFrame):
             header_frame,
             text="Settings",
             font=ctk.CTkFont(family="Segoe UI", size=24, weight="bold"),
-            anchor="w"
+            anchor="w",
         )
         title_label.pack(anchor="w")
 
@@ -37,7 +36,7 @@ class SettingsPanel(ctk.CTkFrame):
             text="Configure hardware interface channels, DBC databases, project details, and visual themes",
             font=ctk.CTkFont(family="Segoe UI", size=13),
             text_color=("gray50", "gray40"),
-            anchor="w"
+            anchor="w",
         )
         subtitle_label.pack(anchor="w", pady=(2, 0))
 
@@ -47,7 +46,7 @@ class SettingsPanel(ctk.CTkFrame):
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=12
+            corner_radius=12,
         )
         form_card.grid(row=1, column=0, sticky="ew", pady=(0, 16))
         form_card.columnconfigure(0, weight=1)
@@ -63,64 +62,88 @@ class SettingsPanel(ctk.CTkFrame):
             text="CONFIGURATION PARAMETERS",
             font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
             text_color=("#1f538d", "#60a5fa"),
-            anchor="w"
+            anchor="w",
         ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 4))
 
         divider = ctk.CTkFrame(form_inner, height=1, fg_color=("gray90", "gray28"))
         divider.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(0, 12))
 
         # Project name
-        ctk.CTkLabel(form_inner, text="Project Name:", font=ctk.CTkFont(family="Segoe UI", size=13)).grid(row=2, column=0, pady=10, sticky="w")
-        self._proj_name = ctk.CTkEntry(form_inner, width=280, font=ctk.CTkFont(family="Segoe UI", size=13))
+        ctk.CTkLabel(
+            form_inner,
+            text="Project Name:",
+            font=ctk.CTkFont(family="Segoe UI", size=13),
+        ).grid(row=2, column=0, pady=10, sticky="w")
+        self._proj_name = ctk.CTkEntry(
+            form_inner, width=280, font=ctk.CTkFont(family="Segoe UI", size=13)
+        )
         self._proj_name.insert(0, project.name)
         self._proj_name.grid(row=2, column=1, sticky="w")
 
         # Bus interface
-        ctk.CTkLabel(form_inner, text="Bus Interface:", font=ctk.CTkFont(family="Segoe UI", size=13)).grid(row=3, column=0, pady=10, sticky="w")
+        ctk.CTkLabel(
+            form_inner,
+            text="Bus Interface:",
+            font=ctk.CTkFont(family="Segoe UI", size=13),
+        ).grid(row=3, column=0, pady=10, sticky="w")
         self._iface_var = ctk.StringVar(value=project.bus_interface)
         self._iface_menu = ctk.CTkOptionMenu(
             form_inner,
             values=BUS_INTERFACES,
             variable=self._iface_var,
             width=180,
-            font=ctk.CTkFont(family="Segoe UI", size=13)
+            font=ctk.CTkFont(family="Segoe UI", size=13),
         )
         self._iface_menu.grid(row=3, column=1, sticky="w")
 
         # Channel
-        ctk.CTkLabel(form_inner, text="Interface Channel:", font=ctk.CTkFont(family="Segoe UI", size=13)).grid(row=4, column=0, pady=10, sticky="w")
-        self._channel = ctk.CTkEntry(form_inner, width=180, font=ctk.CTkFont(family="Consolas", size=13))
+        ctk.CTkLabel(
+            form_inner,
+            text="Interface Channel:",
+            font=ctk.CTkFont(family="Segoe UI", size=13),
+        ).grid(row=4, column=0, pady=10, sticky="w")
+        self._channel = ctk.CTkEntry(
+            form_inner, width=180, font=ctk.CTkFont(family="Consolas", size=13)
+        )
         self._channel.insert(0, project.channel)
         self._channel.grid(row=4, column=1, sticky="w")
 
         # Bitrate
-        ctk.CTkLabel(form_inner, text="Bitrate (bps):", font=ctk.CTkFont(family="Segoe UI", size=13)).grid(row=5, column=0, pady=10, sticky="w")
+        ctk.CTkLabel(
+            form_inner,
+            text="Bitrate (bps):",
+            font=ctk.CTkFont(family="Segoe UI", size=13),
+        ).grid(row=5, column=0, pady=10, sticky="w")
         self._bitrate_var = ctk.StringVar(value=str(project.bitrate))
         self._bitrate_menu = ctk.CTkOptionMenu(
             form_inner,
             values=["125000", "250000", "500000", "1000000"],
             variable=self._bitrate_var,
             width=140,
-            font=ctk.CTkFont(family="Consolas", size=13)
+            font=ctk.CTkFont(family="Consolas", size=13),
         )
         self._bitrate_menu.grid(row=5, column=1, sticky="w")
 
         # DBC file
-        ctk.CTkLabel(form_inner, text="DBC Database:", font=ctk.CTkFont(family="Segoe UI", size=13)).grid(row=6, column=0, pady=10, sticky="w")
-        
+        ctk.CTkLabel(
+            form_inner,
+            text="DBC Database:",
+            font=ctk.CTkFont(family="Segoe UI", size=13),
+        ).grid(row=6, column=0, pady=10, sticky="w")
+
         dbc_row = ctk.CTkFrame(form_inner, fg_color="transparent")
         dbc_row.grid(row=6, column=1, sticky="w")
-        
+
         self._dbc_label = ctk.CTkLabel(
             dbc_row,
             text=project.dbc_path or "No file loaded",
             font=ctk.CTkFont(family="Consolas", size=12),
             text_color=("gray50", "gray40"),
             width=240,
-            anchor="w"
+            anchor="w",
         )
         self._dbc_label.pack(side="left")
-        
+
         self.btn_browse = ctk.CTkButton(
             dbc_row,
             text="Browse",
@@ -132,12 +155,14 @@ class SettingsPanel(ctk.CTkFrame):
             text_color=("#1f538d", "#60a5fa"),
             command=self._browse_dbc,
             width=80,
-            height=28
+            height=28,
         )
         self.btn_browse.pack(side="left", padx=10)
 
         # Theme
-        ctk.CTkLabel(form_inner, text="Theme:", font=ctk.CTkFont(family="Segoe UI", size=13)).grid(row=7, column=0, pady=10, sticky="w")
+        ctk.CTkLabel(
+            form_inner, text="Theme:", font=ctk.CTkFont(family="Segoe UI", size=13)
+        ).grid(row=7, column=0, pady=10, sticky="w")
         self._theme_var = ctk.StringVar(value=config.THEME.capitalize())
         self.theme_btn = ctk.CTkSegmentedButton(
             form_inner,
@@ -146,12 +171,16 @@ class SettingsPanel(ctk.CTkFrame):
             command=self._apply_theme,
             font=ctk.CTkFont(family="Segoe UI", size=12),
             width=240,
-            height=30
+            height=30,
         )
         self.theme_btn.grid(row=7, column=1, sticky="w")
 
         # Timezone
-        ctk.CTkLabel(form_inner, text="CAN Log Timezone:", font=ctk.CTkFont(family="Segoe UI", size=13)).grid(row=8, column=0, pady=10, sticky="w")
+        ctk.CTkLabel(
+            form_inner,
+            text="CAN Log Timezone:",
+            font=ctk.CTkFont(family="Segoe UI", size=13),
+        ).grid(row=8, column=0, pady=10, sticky="w")
         self._tz_var = ctk.StringVar(value=config.TIMEZONE)
         self._tz_menu = ctk.CTkOptionMenu(
             form_inner,
@@ -173,7 +202,7 @@ class SettingsPanel(ctk.CTkFrame):
             variable=self._tz_var,
             command=self._apply_timezone,
             width=220,
-            font=ctk.CTkFont(family="Segoe UI", size=13)
+            font=ctk.CTkFont(family="Segoe UI", size=13),
         )
         self._tz_menu.grid(row=8, column=1, sticky="w")
 
@@ -183,7 +212,7 @@ class SettingsPanel(ctk.CTkFrame):
             fg_color=("white", "gray22"),
             border_width=1,
             border_color=("gray85", "gray28"),
-            corner_radius=12
+            corner_radius=12,
         )
         btn_card.grid(row=2, column=0, sticky="ew", pady=(0, 10))
 
@@ -196,7 +225,7 @@ class SettingsPanel(ctk.CTkFrame):
             font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
             fg_color=("#1f538d", "#60a5fa"),
             command=self._connect,
-            height=36
+            height=36,
         )
         self.connect_btn.pack(side="left", fill="x", expand=True, padx=(0, 6))
 
@@ -210,7 +239,7 @@ class SettingsPanel(ctk.CTkFrame):
             border_color=("gray80", "gray30"),
             text_color=("#1f538d", "#60a5fa"),
             command=self._disconnect,
-            height=36
+            height=36,
         )
         self.disconnect_btn.pack(side="left", fill="x", expand=True, padx=6)
 
@@ -224,7 +253,7 @@ class SettingsPanel(ctk.CTkFrame):
             border_color=("gray80", "gray30"),
             text_color=("#1f538d", "#60a5fa"),
             command=self._save_project,
-            height=36
+            height=36,
         )
         self.save_btn.pack(side="right", fill="x", expand=True, padx=(6, 0))
 
@@ -234,7 +263,7 @@ class SettingsPanel(ctk.CTkFrame):
             text="",
             font=ctk.CTkFont(family="Segoe UI", size=12),
             text_color=("gray50", "gray40"),
-            anchor="w"
+            anchor="w",
         )
         self._status.grid(row=3, column=0, sticky="w", padx=4, pady=8)
 
@@ -251,7 +280,10 @@ class SettingsPanel(ctk.CTkFrame):
             dbc_manager.load(path)
             project.dbc_path = path
             self._dbc_label.configure(text=path, text_color=("black", "white"))
-            self._status.configure(text=f"[Loaded] DBC database file read successfully: {path}", text_color="green")
+            self._status.configure(
+                text=f"[Loaded] DBC database file read successfully: {path}",
+                text_color="green",
+            )
         except Exception as e:
             self._status.configure(text=f"DBC load error: {e}", text_color="red")
 
@@ -264,22 +296,29 @@ class SettingsPanel(ctk.CTkFrame):
             project.bus_interface = iface
             project.channel = channel
             project.bitrate = bitrate
-            self._status.configure(text=f"[Connected] Bus active on {iface} channel {channel}", text_color="green")
+            self._status.configure(
+                text=f"[Connected] Bus active on {iface} channel {channel}",
+                text_color="green",
+            )
         except Exception as e:
             self._status.configure(text=f"Connect failed: {e}", text_color="red")
 
     def _disconnect(self):
         bus_manager.disconnect()
-        self._status.configure(text="Disconnected from bus.", text_color=("gray50", "gray40"))
+        self._status.configure(
+            text="Disconnected from bus.", text_color=("gray50", "gray40")
+        )
 
     def _save_project(self):
         project.name = self._proj_name.get().strip()
         project.save()
-        self._status.configure(text="[Saved] Project file settings written to disk.", text_color="green")
+        self._status.configure(
+            text="[Saved] Project file settings written to disk.", text_color="green"
+        )
 
     def _apply_timezone(self, value: str):
         config.TIMEZONE = value
         self._status.configure(
             text=f"[Timezone] CAN log timestamps will display as {value}.",
-            text_color="green"
+            text_color="green",
         )
