@@ -5,6 +5,7 @@ Uses its own dedicated can.Bus instance so that the monitor's recv() loop
 on the shared bus_manager actually receives the frames (virtual loopback
 requires two separate Bus objects on the same channel).
 """
+
 import threading
 import math
 import time
@@ -75,11 +76,13 @@ class BMSSimulator:
         b1 = (3 & 0x0F) | ((0 & 0x0F) << 4)
         counter = self._tick & 0xFF
         checksum = (soc_raw + b1 + counter) & 0xFF
-        self._send(can.Message(
-            arbitration_id=0x100,
-            data=bytes([soc_raw, b1, counter, checksum, 0, 0, 0, 0]),
-            is_extended_id=False,
-        ))
+        self._send(
+            can.Message(
+                arbitration_id=0x100,
+                data=bytes([soc_raw, b1, counter, checksum, 0, 0, 0, 0]),
+                is_extended_id=False,
+            )
+        )
 
     def _send_pack_vals(self):
         voltage = 400.0 + 20.0 * math.sin(self._tick * 0.05)
@@ -88,27 +91,37 @@ class BMSSimulator:
         current_raw = int(current / 0.1) & 0xFFFF
         avg_raw = int(3.65 / 0.001) & 0xFFFF
         dev_raw = int(0.015 / 0.001) & 0xFF
-        self._send(can.Message(
-            arbitration_id=0x101,
-            data=bytes([
-                voltage_raw & 0xFF, (voltage_raw >> 8) & 0xFF,
-                current_raw & 0xFF, (current_raw >> 8) & 0xFF,
-                avg_raw & 0xFF,     (avg_raw >> 8) & 0xFF,
-                dev_raw, 0,
-            ]),
-            is_extended_id=False,
-        ))
+        self._send(
+            can.Message(
+                arbitration_id=0x101,
+                data=bytes(
+                    [
+                        voltage_raw & 0xFF,
+                        (voltage_raw >> 8) & 0xFF,
+                        current_raw & 0xFF,
+                        (current_raw >> 8) & 0xFF,
+                        avg_raw & 0xFF,
+                        (avg_raw >> 8) & 0xFF,
+                        dev_raw,
+                        0,
+                    ]
+                ),
+                is_extended_id=False,
+            )
+        )
 
     def _send_temps(self):
         base = 25.0 + 10.0 * math.sin(self._tick * 0.02)
         t_max = int(base + 5.0 + 40) & 0xFF
         t_min = int(base - 3.0 + 40) & 0xFF
         t_avg = int(base + 1.0 + 40) & 0xFF
-        self._send(can.Message(
-            arbitration_id=0x102,
-            data=bytes([t_max, t_min, t_avg, 0, 0, 0, 0, 0]),
-            is_extended_id=False,
-        ))
+        self._send(
+            can.Message(
+                arbitration_id=0x102,
+                data=bytes([t_max, t_min, t_avg, 0, 0, 0, 0, 0]),
+                is_extended_id=False,
+            )
+        )
 
 
 bms_simulator = BMSSimulator()
