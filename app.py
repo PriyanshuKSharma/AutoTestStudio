@@ -14,13 +14,14 @@ BASE_DIR = _base_dir()
 sys.path.insert(0, BASE_DIR)
 
 # Keep the DB and project.json next to the exe / script, not inside _MEIPASS
-RUNTIME_DIR = os.path.dirname(sys.executable) if getattr(sys, "frozen", False) \
-    else BASE_DIR
+RUNTIME_DIR = (
+    os.path.dirname(sys.executable) if getattr(sys, "frozen", False) else BASE_DIR
+)
 os.chdir(RUNTIME_DIR)
 
-from database.sqlite import get_db
-from core.project import project
-from gui.main_window import MainWindow
+from database.sqlite import get_db  # noqa: E402
+from core.project import project  # noqa: E402
+from gui.main_window import MainWindow  # noqa: E402
 
 
 def main():
