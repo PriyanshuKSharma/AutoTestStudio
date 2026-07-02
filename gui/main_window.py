@@ -13,22 +13,22 @@ from gui.settings import SettingsPanel
 from gui.version_control import VersionControlPanel
 
 NAV_ITEMS = [
-    ("◈  Home",            HomePanel),
-    ("◎  CAN Monitor",     MonitorPanel),
-    ("▷  CAN Sender",      SenderPanel),
-    ("▦  Signal Viewer",   SignalViewerPanel),
-    ("≡  DBC Explorer",    DBCExplorerPanel),
-    ("⊞  Test Builder",    TestBuilderPanel),
-    ("▶  Test Runner",     TestRunnerPanel),
+    ("◈  Home", HomePanel),
+    ("◎  CAN Monitor", MonitorPanel),
+    ("▷  CAN Sender", SenderPanel),
+    ("▦  Signal Viewer", SignalViewerPanel),
+    ("≡  DBC Explorer", DBCExplorerPanel),
+    ("⊞  Test Builder", TestBuilderPanel),
+    ("▶  Test Runner", TestRunnerPanel),
     ("⊗  Fault Injection", FaultInjectionPanel),
-    ("▤  Reports",         ReportsPanel),
-    ("◧  Settings",        SettingsPanel),
+    ("▤  Reports", ReportsPanel),
+    ("◧  Settings", SettingsPanel),
     ("⎇  Version Control", VersionControlPanel),
 ]
 
 # Explicit text colors that stay readable in both light and dark mode
-_NAV_TEXT   = ("gray10", "gray90")   # dark text on light, light text on dark
-_NAV_HOVER  = ("gray75", "gray30")
+_NAV_TEXT = ("gray10", "gray90")  # dark text on light, light text on dark
+_NAV_HOVER = ("gray75", "gray30")
 
 
 class MainWindow(ctk.CTk):
@@ -67,7 +67,7 @@ class MainWindow(ctk.CTk):
                 fg_color="transparent",
                 hover_color=_NAV_HOVER,
                 text_color=_NAV_TEXT,
-                command=lambda l=label: self._show_panel(l),
+                command=lambda panel_label=label: self._show_panel(panel_label),
                 corner_radius=6,
                 height=36,
             )
@@ -75,7 +75,9 @@ class MainWindow(ctk.CTk):
             self._nav_btns[label] = btn
 
         # Content area
-        self._content = ctk.CTkFrame(self, corner_radius=0, fg_color=("gray92", "gray17"))
+        self._content = ctk.CTkFrame(
+            self, corner_radius=0, fg_color=("gray92", "gray17")
+        )
         self._content.pack(side="left", fill="both", expand=True)
 
         for label, PanelClass in NAV_ITEMS:
