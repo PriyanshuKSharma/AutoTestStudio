@@ -1,0 +1,29 @@
+image: python:3.12
+
+pipelines:
+  default:
+    - step:
+        name: Test & Build
+
+        caches:
+          - pip
+
+        script:
+          - python -m pip install --upgrade pip
+
+          - |
+            if [ -f requirements.txt ]; then
+              python -m pip install -r requirements.txt
+            fi
+
+          - python -m pip install pytest black ruff pyinstaller
+
+          - python -m black --check .
+          - ruff check .
+          - python -m pytest tests
+
+          # Builds a Linux executable, NOT a Windows .exe
+          - pyinstaller AutoTestStudio.spec
+
+        artifacts:
+          - dist/**
