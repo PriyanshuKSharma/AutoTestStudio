@@ -229,7 +229,7 @@ class MonitorPanel(ctk.CTkFrame):
     def _stop(self):
         self._running = False
         self._start_btn.configure(state="normal")
-        self._stop_btn.configure(state="disabled", fg_color=None, hover_color=None)
+        self._stop_btn.configure(state="disabled", fg_color="transparent", hover_color="transparent")
         self._status.configure(text="Stopped.", text_color=("gray50", "gray40"))
 
         self.mon_dot.configure(fg_color="#ef4444")
