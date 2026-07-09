@@ -128,7 +128,7 @@ class MonitorPanel(ctk.CTkFrame):
             ctrl_inner,
             text="Start",
             font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
-            fg_color=("1f538d", "#60a5fa"),
+            fg_color=("#1f538d", "#60a5fa"),
             command=self._start,
             width=80,
             height=32,
@@ -154,7 +154,7 @@ class MonitorPanel(ctk.CTkFrame):
             hover_color=("gray90", "gray28"),
             border_width=1,
             border_color=("gray80", "gray30"),
-            text_color=("1f538d", "#60a5fa"),
+            text_color=("#1f538d", "#60a5fa"),
             command=self._clear,
             width=90,
             height=32,
@@ -201,7 +201,7 @@ class MonitorPanel(ctk.CTkFrame):
                 width=w,
                 anchor="w",
                 font=ctk.CTkFont(family="Segoe UI", size=12, weight="bold"),
-                text_color=("1f538d", "#60a5fa"),
+                text_color=("#1f538d", "#60a5fa"),
             ).pack(side="left", padx=10, pady=6)
 
         # Scroll Frame for records
