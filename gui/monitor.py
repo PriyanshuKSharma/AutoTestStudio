@@ -1,3 +1,4 @@
+import queue
 import threading
 import customtkinter as ctk
 import can
@@ -7,7 +8,12 @@ from core.simulator import bms_simulator
 from database.sqlite import get_db
 from datetime import datetime
 
+# Maximum rows kept visible in the scroll frame
 MAX_ROWS = 200
+# How many messages to pull from the queue per UI refresh tick
+BATCH_SIZE = 50
+# UI refresh interval in milliseconds – keeps the main thread free
+POLL_INTERVAL_MS = 100
 
 
 class MonitorPanel(ctk.CTkFrame):
@@ -16,6 +22,9 @@ class MonitorPanel(ctk.CTkFrame):
         self._running = False
         self._thread = None
         self._row_count = 0
+        # Thread-safe buffer: recv thread pushes, UI thread pops
+        self._msg_queue: queue.Queue = queue.Queue(maxsize=2000)
+        self._poll_id = None  # after() handle so we can cancel it
         self._build()
 
     def _build(self):
@@ -119,7 +128,7 @@ class MonitorPanel(ctk.CTkFrame):
             ctrl_inner,
             text="Start",
             font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
-            fg_color=("#1f538d", "#60a5fa"),
+            fg_color=("1f538d", "#60a5fa"),
             command=self._start,
             width=80,
             height=32,
@@ -145,7 +154,7 @@ class MonitorPanel(ctk.CTkFrame):
             hover_color=("gray90", "gray28"),
             border_width=1,
             border_color=("gray80", "gray30"),
-            text_color=("#1f538d", "#60a5fa"),
+            text_color=("1f538d", "#60a5fa"),
             command=self._clear,
             width=90,
             height=32,
@@ -192,7 +201,7 @@ class MonitorPanel(ctk.CTkFrame):
                 width=w,
                 anchor="w",
                 font=ctk.CTkFont(family="Segoe UI", size=12, weight="bold"),
-                text_color=("#1f538d", "#60a5fa"),
+                text_color=("1f538d", "#60a5fa"),
             ).pack(side="left", padx=10, pady=6)
 
         # Scroll Frame for records
@@ -200,6 +209,9 @@ class MonitorPanel(ctk.CTkFrame):
             table_card, height=400, fg_color="transparent"
         )
         self._scroll.grid(row=1, column=0, sticky="nsew", padx=12, pady=(0, 12))
+
+        # Pre-create row fonts once — reused for every row widget
+        self._row_font = ctk.CTkFont(family="Consolas", size=12)
 
     # ------------------------------------------------------------------ #
     #  Start / Stop                                                      #
@@ -219,27 +231,28 @@ class MonitorPanel(ctk.CTkFrame):
         self._status.configure(
             text="[Receiving] Capturing live frames...", text_color="green"
         )
-
         self.mon_dot.configure(fg_color="#10b981")
         self.mon_text.configure(text="Status: Active", text_color="#10b981")
 
         self._thread = threading.Thread(target=self._recv_loop, daemon=True)
         self._thread.start()
+        self._schedule_poll()
 
     def _stop(self):
         self._running = False
+        self._cancel_poll()
         self._start_btn.configure(state="normal")
         self._stop_btn.configure(
             state="disabled", fg_color="transparent", hover_color="transparent"
         )
         self._status.configure(text="Stopped.", text_color=("gray50", "gray40"))
-
         self.mon_dot.configure(fg_color="#ef4444")
         self.mon_text.configure(text="Status: Stopped", text_color="#ef4444")
 
     def destroy(self):
         """Stop the recv thread before Tkinter tears down the widget tree."""
         self._running = False
+        self._cancel_poll()
         if self._thread and self._thread.is_alive():
             self._thread.join(timeout=1.0)
         super().destroy()
@@ -248,6 +261,51 @@ class MonitorPanel(ctk.CTkFrame):
         for w in self._scroll.winfo_children():
             w.destroy()
         self._row_count = 0
+
+    # ------------------------------------------------------------------ #
+    #  Polling: drain the queue on the UI thread every POLL_INTERVAL_MS  #
+    # ------------------------------------------------------------------ #
+    def _schedule_poll(self):
+        """Arm the next UI-thread drain tick."""
+        try:
+            self._poll_id = self.after(POLL_INTERVAL_MS, self._poll_queue)
+        except Exception:
+            pass
+
+    def _cancel_poll(self):
+        if self._poll_id is not None:
+            try:
+                self.after_cancel(self._poll_id)
+            except Exception:
+                pass
+            self._poll_id = None
+
+    def _poll_queue(self):
+        """
+        Called every POLL_INTERVAL_MS on the UI thread.
+        Drains up to BATCH_SIZE messages from the queue, writes them to DB
+        in one shot, then renders them — keeping the main thread responsive.
+        """
+        try:
+            if not self.winfo_exists():
+                return
+        except Exception:
+            return
+
+        batch: list[can.Message] = []
+        try:
+            for _ in range(BATCH_SIZE):
+                batch.append(self._msg_queue.get_nowait())
+        except queue.Empty:
+            pass
+
+        if batch:
+            self._batch_log_to_db(batch)
+            for msg in batch:
+                self._add_row(msg)
+
+        if self._running:
+            self._schedule_poll()
 
     # ------------------------------------------------------------------ #
     #  Simulator                                                         #
@@ -272,7 +330,7 @@ class MonitorPanel(ctk.CTkFrame):
             )
 
     # ------------------------------------------------------------------ #
-    #  Receive loop                                                      #
+    #  Receive loop  (background thread — NO Tkinter calls here)        #
     # ------------------------------------------------------------------ #
     def _recv_loop(self):
         while self._running:
@@ -281,34 +339,39 @@ class MonitorPanel(ctk.CTkFrame):
             except Exception:
                 break
             if msg and self._running:
-                self._log_to_db(msg)
                 try:
-                    self.after(0, self._add_row, msg)
-                except Exception:
-                    break
+                    # Non-blocking put; drop the frame if the queue is full
+                    # (prevents the recv thread from blocking the bus driver)
+                    self._msg_queue.put_nowait(msg)
+                except queue.Full:
+                    pass  # intentionally drop; UI is catching up
 
-    def _log_to_db(self, msg: can.Message):
+    # ------------------------------------------------------------------ #
+    #  DB write — batched, one commit per poll tick                      #
+    # ------------------------------------------------------------------ #
+    def _batch_log_to_db(self, msgs: list[can.Message]):
         db = get_db()
-        db.execute(
-            "INSERT INTO can_log (timestamp, can_id, dlc, data, channel) VALUES (?,?,?,?,?)",
+        now_iso = datetime.utcnow().isoformat()
+        rows = [
             (
-                datetime.utcnow().isoformat(),
-                hex(msg.arbitration_id),
-                msg.dlc,
-                msg.data.hex(" ").upper(),
+                now_iso,
+                hex(m.arbitration_id),
+                m.dlc,
+                m.data.hex(" ").upper(),
                 bus_manager.channel,
-            ),
+            )
+            for m in msgs
+        ]
+        db.executemany(
+            "INSERT INTO can_log (timestamp, can_id, dlc, data, channel) VALUES (?,?,?,?,?)",
+            rows,
         )
         db.commit()
 
+    # ------------------------------------------------------------------ #
+    #  Row rendering  (UI thread only)                                   #
+    # ------------------------------------------------------------------ #
     def _add_row(self, msg: can.Message):
-        # Bail out if the widget has already been destroyed (e.g. window closing)
-        try:
-            if not self.winfo_exists():
-                return
-        except Exception:
-            return
-
         # Drop oldest row when cap reached
         if self._row_count >= MAX_ROWS:
             children = self._scroll.winfo_children()
@@ -317,6 +380,8 @@ class MonitorPanel(ctk.CTkFrame):
                     children[0].destroy()
                 except Exception:
                     pass
+                else:
+                    self._row_count -= 1
 
         decoded = dbc_manager.decode(msg.arbitration_id, bytes(msg.data))
         decoded_str = (
@@ -328,25 +393,26 @@ class MonitorPanel(ctk.CTkFrame):
             else ""
         )
 
+        ts = datetime.now().strftime("%H:%M:%S.%f")[:-3]
+        # Build one compact line instead of 5 separate CTkLabel widgets per row.
+        # A single label is ~5× faster to create and layout.
+        line = (
+            f"{ts:<13} "
+            f"0x{msg.arbitration_id:03X}{'':>6} "
+            f"{msg.dlc:<5} "
+            f"{msg.data.hex(' ').upper():<25} "
+            f"{decoded_str}"
+        )
+
         bg = ("gray95", "gray25") if self._row_count % 2 == 0 else "transparent"
-        row = ctk.CTkFrame(self._scroll, fg_color=bg, corner_radius=6)
+        row = ctk.CTkFrame(self._scroll, fg_color=bg, corner_radius=4)
         row.pack(fill="x", pady=1, padx=4)
 
-        ts = datetime.now().strftime("%H:%M:%S.%f")[:-3]
-        for text, width in [
-            (ts, 110),
-            (f"0x{msg.arbitration_id:03X}", 80),
-            (str(msg.dlc), 40),
-            (msg.data.hex(" ").upper(), 210),
-            (decoded_str, 0),
-        ]:
-            font_family = "Consolas" if width > 0 else "Segoe UI"
-            ctk.CTkLabel(
-                row,
-                text=text,
-                width=width,
-                anchor="w",
-                font=ctk.CTkFont(family=font_family, size=12),
-            ).pack(side="left", padx=10, pady=4)
+        ctk.CTkLabel(
+            row,
+            text=line,
+            anchor="w",
+            font=self._row_font,  # reuse pre-created font object
+        ).pack(side="left", padx=10, pady=3)
 
         self._row_count += 1
