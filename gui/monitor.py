@@ -229,11 +229,20 @@ class MonitorPanel(ctk.CTkFrame):
     def _stop(self):
         self._running = False
         self._start_btn.configure(state="normal")
-        self._stop_btn.configure(state="disabled", fg_color="transparent", hover_color="transparent")
+        self._stop_btn.configure(
+            state="disabled", fg_color="transparent", hover_color="transparent"
+        )
         self._status.configure(text="Stopped.", text_color=("gray50", "gray40"))
 
         self.mon_dot.configure(fg_color="#ef4444")
         self.mon_text.configure(text="Status: Stopped", text_color="#ef4444")
+
+    def destroy(self):
+        """Stop the recv thread before Tkinter tears down the widget tree."""
+        self._running = False
+        if self._thread and self._thread.is_alive():
+            self._thread.join(timeout=1.0)
+        super().destroy()
 
     def _clear(self):
         for w in self._scroll.winfo_children():
@@ -267,10 +276,16 @@ class MonitorPanel(ctk.CTkFrame):
     # ------------------------------------------------------------------ #
     def _recv_loop(self):
         while self._running:
-            msg = bus_manager.recv(timeout=0.5)
-            if msg:
+            try:
+                msg = bus_manager.recv(timeout=0.5)
+            except Exception:
+                break
+            if msg and self._running:
                 self._log_to_db(msg)
-                self.after(0, self._add_row, msg)
+                try:
+                    self.after(0, self._add_row, msg)
+                except Exception:
+                    break
 
     def _log_to_db(self, msg: can.Message):
         db = get_db()
@@ -287,11 +302,21 @@ class MonitorPanel(ctk.CTkFrame):
         db.commit()
 
     def _add_row(self, msg: can.Message):
+        # Bail out if the widget has already been destroyed (e.g. window closing)
+        try:
+            if not self.winfo_exists():
+                return
+        except Exception:
+            return
+
         # Drop oldest row when cap reached
         if self._row_count >= MAX_ROWS:
             children = self._scroll.winfo_children()
             if children:
-                children[0].destroy()
+                try:
+                    children[0].destroy()
+                except Exception:
+                    pass
 
         decoded = dbc_manager.decode(msg.arbitration_id, bytes(msg.data))
         decoded_str = (
